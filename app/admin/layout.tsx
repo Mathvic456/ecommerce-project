@@ -16,7 +16,8 @@ export default async function AdminLayout({
   const isPublicAdminRoute = [
     "/admin/login", 
     "/admin/unauthorized", 
-    "/admin/first-admin-setup"
+    "/admin/first-admin-setup",
+    "/admin/setup"
   ].some(route => pathname === route || pathname.startsWith(route + "/"))
 
   // Server-side admin check

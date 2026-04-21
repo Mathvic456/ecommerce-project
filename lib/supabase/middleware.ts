@@ -38,7 +38,8 @@ export async function updateSession(request: NextRequest) {
     const publicAdminRoutes = [
       "/admin/login", 
       "/admin/unauthorized", 
-      "/admin/first-admin-setup"
+      "/admin/first-admin-setup",
+      "/admin/setup"
     ]
     
     if (!publicAdminRoutes.includes(url.pathname)) {
