@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { createAdminUser } from "@/app/actions/admin-setup"
+import { setupFirstAdmin } from "@/app/actions/admin-setup"
 
 export default function AdminSetupPage() {
   const [email, setEmail] = useState("")
@@ -30,7 +30,7 @@ export default function AdminSetupPage() {
     }
 
     try {
-      const result = await createAdminUser(email, password)
+      const result = await setupFirstAdmin(email, password)
 
       if (result.error) {
         setError(result.error)
