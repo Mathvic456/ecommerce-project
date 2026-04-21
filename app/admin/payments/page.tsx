@@ -85,7 +85,7 @@ export default function AdminPayments() {
                 <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">${(stats.totalAmount / 100).toFixed(2)}</p>
+                <p className="text-3xl font-bold">₦{(stats.totalAmount / 100).toFixed(2)}</p>
               </CardContent>
             </Card>
 
@@ -94,7 +94,7 @@ export default function AdminPayments() {
                 <CardTitle className="text-sm font-medium">Completed</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">${(stats.completedAmount / 100).toFixed(2)}</p>
+                <p className="text-3xl font-bold">₦{(stats.completedAmount / 100).toFixed(2)}</p>
               </CardContent>
             </Card>
 
@@ -103,7 +103,7 @@ export default function AdminPayments() {
                 <CardTitle className="text-sm font-medium">Pending</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-3xl font-bold">${(stats.pendingAmount / 100).toFixed(2)}</p>
+                <p className="text-3xl font-bold">₦{(stats.pendingAmount / 100).toFixed(2)}</p>
               </CardContent>
             </Card>
           </div>
@@ -129,7 +129,7 @@ export default function AdminPayments() {
                     {payments.map((payment) => (
                       <tr key={payment.id} className="border-b border-border hover:bg-muted">
                         <td className="px-4 py-3 font-mono text-sm">{payment.order_number}</td>
-                        <td className="px-4 py-3 font-semibold">${(payment.total_amount / 100).toFixed(2)}</td>
+                        <td className="px-4 py-3 font-semibold">₦{(payment.total_amount / 100).toFixed(2)}</td>
                         <td className="px-4 py-3">
                           <Badge className={getStatusColor(payment.status)}>{payment.status}</Badge>
                         </td>

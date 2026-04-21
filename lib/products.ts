@@ -33,6 +33,7 @@ export interface Order {
   totalAmount: number
   status: "pending" | "completed" | "cancelled"
   stripePaymentId?: string
+  shipping_address?: string
   createdAt: string
   updatedAt: string
   items?: OrderItem[]

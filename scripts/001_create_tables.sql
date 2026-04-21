@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
   total_amount INTEGER NOT NULL, -- Total in cents
   status TEXT DEFAULT 'pending', -- pending, completed, cancelled
   stripe_payment_id TEXT,
+  shipping_address TEXT,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -113,3 +114,53 @@ CREATE POLICY "Allow users to delete their own cart items"
 CREATE POLICY "Allow admins to view admin list"
   ON public.admin_users FOR SELECT
   USING (auth.uid() IN (SELECT id FROM public.admin_users));
+
+-- User profiles table
+CREATE TABLE IF NOT EXISTS public.user_profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  first_name TEXT,
+  last_name TEXT,
+  phone_number TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- User addresses table
+CREATE TABLE IF NOT EXISTS public.user_addresses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  street_address TEXT NOT NULL,
+  city TEXT NOT NULL,
+  country TEXT NOT NULL,
+  postal_code TEXT,
+  is_default BOOLEAN DEFAULT false,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable RLS on new tables
+ALTER TABLE public.user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_addresses ENABLE ROW LEVEL SECURITY;
+
+-- User profile policies
+CREATE POLICY "Users can view their own profile" ON public.user_profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Users can insert their own profile" ON public.user_profiles
+  FOR INSERT WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile" ON public.user_profiles
+  FOR UPDATE USING (auth.uid() = id);
+
+-- User address policies
+CREATE POLICY "Users can view their own addresses" ON public.user_addresses
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own addresses" ON public.user_addresses
+  FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own addresses" ON public.user_addresses
+  FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own addresses" ON public.user_addresses
+  FOR DELETE USING (auth.uid() = user_id);

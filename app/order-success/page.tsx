@@ -51,12 +51,7 @@ export default function OrderSuccessPage() {
         .single()
 
       if (orderData) {
-        // Update order status to completed
-        await supabase.from("orders").update({ status: "completed" }).eq("id", orderId)
-
-        // Clear cart
-        await supabase.from("cart_items").delete().eq("user_id", data.user.id)
-
+        // Note: Status update and cart clearing moved to Stripe Webhook for security
         setOrder(orderData)
       }
 

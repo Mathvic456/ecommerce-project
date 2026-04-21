@@ -107,6 +107,15 @@ export default function AdminOrders() {
                   </div>
                 )}
 
+                {order.shipping_address && (
+                  <div className="border-t border-border pt-4">
+                    <h4 className="font-semibold mb-2">Shipping To:</h4>
+                    <p className="text-sm text-muted-foreground whitespace-pre-line">
+                      {order.shipping_address}
+                    </p>
+                  </div>
+                )}
+
                 <div className="border-t border-border pt-4">
                   <label className="text-sm font-semibold mb-2 block">Update Status:</label>
                   <Select value={order.status} onValueChange={(value) => handleStatusChange(order.id, value)}>

@@ -59,27 +59,30 @@ export function CountryFlagSelector({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 h-12 px-3 bg-transparent hover:bg-muted/50 transition-colors focus:outline-none"
+        className="flex items-center gap-3 h-12 px-4 w-full bg-transparent hover:bg-muted/50 transition-colors focus:outline-none"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
         {selectedCountry ? (
-          <>
+          <div className="flex items-center gap-3 w-full">
             <Image
               src={getFlagUrl(selectedCountry.code) || "/placeholder.svg"}
               alt={selectedCountry.name}
               width={24}
               height={16}
-              className="rounded-sm object-cover"
+              className="rounded-sm object-cover flex-shrink-0"
               unoptimized
             />
-            <ChevronDown className="h-3 w-3 text-muted-foreground" />
-          </>
+            <span className="text-sm font-medium truncate flex-1 text-left">
+              {selectedCountry.name} ({selectedCountry.code})
+            </span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          </div>
         ) : (
-          <>
-            <span className="text-sm text-muted-foreground">Select</span>
-            <ChevronDown className="h-3 w-3 text-muted-foreground" />
-          </>
+          <div className="flex items-center justify-between w-full">
+            <span className="text-sm text-muted-foreground">Select Country</span>
+            <ChevronDown className="h-4 w-4 text-muted-foreground" />
+          </div>
         )}
       </button>
 
@@ -139,7 +142,7 @@ export function CountryFlagSelector({
                     className="rounded-sm object-cover flex-shrink-0"
                     unoptimized
                   />
-                  <span className="text-sm flex-1 truncate">{country.name}</span>
+                  <span className="text-sm flex-1 truncate">{country.name} ({country.code})</span>
                   <span className="text-xs text-muted-foreground">{country.dialCode}</span>
                 </button>
               ))

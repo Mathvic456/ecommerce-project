@@ -15,6 +15,7 @@ import { getUserAddresses, addUserAddress } from "@/app/actions/user-profile"
 import { ChevronLeft, Lock, MapPin, Plus, Check, CreditCard, Loader2 } from "lucide-react"
 import { countries, type CountryData } from "@/lib/countries"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
+import { CitySelector } from "@/components/city-selector"
 
 interface ProductImage {
   id: string
@@ -96,7 +97,11 @@ export default function CheckoutPage() {
     const country = countries.find(c => c.code === countryCode)
     setSelectedCountry(country || null)
     if (country?.postalCodePlaceholder) {
-      setNewAddress(prev => ({ ...prev, postalCode: country.postalCodePlaceholder || "" }))
+      setNewAddress(prev => ({ 
+        ...prev, 
+        postalCode: country.postalCodePlaceholder || "",
+        city: "" // Reset city on country change
+      }))
     }
   }
 
@@ -160,7 +165,7 @@ export default function CheckoutPage() {
     setProcessing(true)
 
     try {
-      const result = await createCheckoutSession(cartItems, email, user.id, currency)
+      const result = await createCheckoutSession(cartItems, email, user.id, currency, selectedAddressId || undefined)
 
       if (!result.success) {
         setError(result.error || "Checkout failed. Please try again.")
@@ -300,27 +305,22 @@ export default function CheckoutPage() {
                   {/* Country Selector */}
                   <div className="space-y-2">
                     <label className="text-sm text-muted-foreground">Country</label>
-                    <div className="flex items-center h-12 border border-border bg-background overflow-hidden">
+                    <div className="w-full border border-border bg-background">
                       <CountryFlagSelector
                         countries={countries}
                         selectedCountry={selectedCountry}
                         onSelect={handleCountryChange}
                         required
                       />
-                      <span className="flex-1 px-3 text-sm">
-                        {selectedCountry?.name || "Select a country"}
-                      </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      value={newAddress.city}
-                      onChange={(e) => setNewAddress({ ...newAddress, city: e.target.value })}
-                      placeholder="City"
-                      className="w-full px-4 py-3 border border-border bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                      required
+                    <CitySelector
+                      countryName={selectedCountry?.name || ""}
+                      selectedCity={newAddress.city}
+                      onSelect={(city) => setNewAddress({ ...newAddress, city })}
+                      disabled={!selectedCountry}
                     />
                     <div className="space-y-1">
                       <input
@@ -378,9 +378,9 @@ export default function CheckoutPage() {
               <div className="p-4 border border-border bg-secondary flex items-center gap-4">
                 <CreditCard size={20} />
                 <div>
-                  <p className="font-medium">Secure payment via Stripe</p>
+                  <p className="font-medium">Secure payment via Paystack</p>
                   <p className="text-sm text-muted-foreground">
-                    You'll be redirected to Stripe to complete your purchase
+                    You'll be redirected to Paystack to complete your purchase
                   </p>
                 </div>
               </div>

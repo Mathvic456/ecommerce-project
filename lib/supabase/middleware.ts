@@ -31,15 +31,28 @@ export async function updateSession(request: NextRequest) {
   
   // Protect /admin routes
   if (url.pathname.startsWith("/admin")) {
-    // List of admin routes that DON'T require authentication
+    // List of admin routes that DON'T require authentication or admin privileges
     const publicAdminRoutes = [
       "/admin/login", 
       "/admin/unauthorized", 
       "/admin/first-admin-setup"
     ]
     
-    if (!user && !publicAdminRoutes.includes(url.pathname)) {
-      return NextResponse.redirect(new URL("/admin/login", request.url))
+    if (!publicAdminRoutes.includes(url.pathname)) {
+      if (!user) {
+        return NextResponse.redirect(new URL("/admin/login", request.url))
+      }
+
+      // Check if user is an admin
+      const { data: adminUser } = await supabase
+        .from("admin_users")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle()
+
+      if (!adminUser) {
+        return NextResponse.redirect(new URL("/admin/unauthorized", request.url))
+      }
     }
   }
   
