@@ -21,7 +21,7 @@ export async function GET(request: Request) {
         // Update order status securely on server
         await supabase
           .from("orders")
-          .update({ status: "completed" })
+          .update({ status: "received" })
           .eq("id", orderId)
           .eq("status", "pending") // Only update if still pending
       }

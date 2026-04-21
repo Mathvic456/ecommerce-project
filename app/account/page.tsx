@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
@@ -81,12 +83,16 @@ export default function AccountPage() {
 
   const getStatusStyle = (status: string) => {
     switch (status) {
-      case "completed":
+      case "delivered":
         return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-      case "pending":
+      case "shipped":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+      case "received":
         return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
       case "cancelled":
         return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
+      case "pending":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400"
       default:
         return "bg-secondary text-secondary-foreground"
     }
@@ -196,7 +202,7 @@ export default function AccountPage() {
                             <div className="flex items-center gap-3 mb-2">
                               <h3 className="font-medium">Order #{order.order_number}</h3>
                               <span className={`px-2 py-1 text-xs uppercase tracking-wider ${getStatusStyle(order.status)}`}>
-                                {order.status}
+                                {order.status === 'pending' ? 'Pending Payment' : order.status}
                               </span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">

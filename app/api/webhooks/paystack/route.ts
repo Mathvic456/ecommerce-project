@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         if (data.metadata?.order_id) {
           const { error } = await supabase
             .from("orders")
-            .update({ status: "completed" })
+            .update({ status: "received" })
             .eq("id", data.metadata.order_id)
             .eq("status", "pending")
 

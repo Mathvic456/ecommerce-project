@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic"
+
 import React from "react"
 
 import { useEffect, useState } from "react"
@@ -38,18 +40,17 @@ interface Order {
 }
 
 const statusSteps = [
-  { key: "pending", label: "Order Placed", icon: Clock },
-  { key: "processing", label: "Processing", icon: Package },
-  { key: "shipped", label: "Shipped", icon: Truck },
-  { key: "delivered", label: "Delivered", icon: CheckCircle }
+  { key: "received", label: "Order Received", icon: Clock },
+  { key: "shipped", label: "Order Shipped", icon: Truck },
+  { key: "delivered", label: "Order Delivered", icon: CheckCircle }
 ]
 
 function getStatusIndex(status: string): number {
   const statusMap: Record<string, number> = {
     pending: 0,
-    processing: 1,
-    shipped: 2,
-    delivered: 3,
+    received: 0,
+    shipped: 1,
+    delivered: 2,
     cancelled: -1
   }
   return statusMap[status] ?? 0
@@ -65,16 +66,9 @@ export default function TrackOrderPage() {
   const supabase = createClient()
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push("/auth/login?redirect=/track-order")
-        return
-      }
-      setLoading(false)
-    }
-    checkAuth()
-  }, [supabase, router])
+    // Initial loading done immediately since auth is now optional
+    setLoading(false)
+  }, [])
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -220,7 +214,7 @@ export default function TrackOrderPage() {
                   <div className="absolute top-6 left-6 right-6 h-0.5 bg-border">
                     <div 
                       className="h-full bg-primary transition-all duration-500"
-                      style={{ width: `${Math.max(0, currentStatusIndex) * 33.33}%` }}
+                      style={{ width: `${Math.max(0, currentStatusIndex) * 50}%` }}
                     />
                   </div>
 
@@ -279,7 +273,7 @@ export default function TrackOrderPage() {
               <div className="flex justify-between items-center py-3 border-t border-border">
                 <span className="font-medium">Total</span>
                 <span className="text-lg font-medium">
-                  ${(order.total / 100).toFixed(2)}
+                  ₦{(order.total_amount / 100).toFixed(2)}
                 </span>
               </div>
             </div>

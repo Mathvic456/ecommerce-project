@@ -45,7 +45,7 @@ export default function AdminDashboard() {
         
         // Correcting the data mapping bug: using total_amount (cents)
         const totalRevenue = orders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
-        const pendingOrders = orders.filter((order) => order.status === "pending").length
+        const pendingOrders = orders.filter((order) => order.status === "received").length
 
         setStats({
           totalProducts,
@@ -191,8 +191,9 @@ export default function AdminDashboard() {
                           <Badge 
                             variant="secondary" 
                             className={
-                              order.status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                              order.status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
+                              order.status === 'delivered' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
+                              order.status === 'shipped' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                              order.status === 'received' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' :
                               'bg-muted'
                             }
                           >

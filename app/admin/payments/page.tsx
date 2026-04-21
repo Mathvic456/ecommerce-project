@@ -30,10 +30,10 @@ export default function AdminPayments() {
     // Calculate stats
     const totalAmount = orders.reduce((sum, order) => sum + order.total_amount, 0)
     const completedAmount = orders
-      .filter((order) => order.status === "completed")
+      .filter((order) => order.status === "delivered")
       .reduce((sum, order) => sum + order.total_amount, 0)
     const pendingAmount = orders
-      .filter((order) => order.status === "pending")
+      .filter((order) => order.status === "received" || order.status === "shipped")
       .reduce((sum, order) => sum + order.total_amount, 0)
 
     setStats({
@@ -48,12 +48,16 @@ export default function AdminPayments() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
+      case "delivered":
         return "bg-green-500"
-      case "pending":
+      case "shipped":
+        return "bg-blue-500"
+      case "received":
         return "bg-yellow-500"
       case "cancelled":
         return "bg-red-500"
+      case "pending":
+        return "bg-gray-500"
       default:
         return "bg-gray-500"
     }

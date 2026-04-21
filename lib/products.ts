@@ -32,7 +32,7 @@ export interface Order {
   user_id: string
   order_number: string
   total_amount: number
-  status: "pending" | "completed" | "cancelled"
+  status: "pending" | "received" | "shipped" | "delivered" | "cancelled"
   stripe_payment_id?: string
   shipping_address?: string
   created_at: string
