@@ -2,49 +2,51 @@ export interface Product {
   id: string
   name: string
   description: string
-  categoryId: string
-  priceUsd: number // Price in cents
-  priceGbp: number // Price in cents
-  priceNgn: number // Price in cents
+  category_id: string
+  price_usd: number // Price in cents
+  price_gbp: number // Price in cents
+  price_ngn: number // Price in cents
   images?: ProductImage[]
-  createdAt: string
-  updatedAt: string
+  created_at: string
+  updated_at: string
 }
 
 export interface ProductImage {
   id: string
-  productId: string
-  imageUrl: string
-  displayOrder: number
+  product_id: string
+  image_url: string
+  display_order: number
+  created_at?: string
 }
 
 export interface CartItem {
   id: string
-  userId: string
-  productId: string
+  user_id: string
+  product_id: string
   quantity: number
   product?: Product
 }
 
 export interface Order {
   id: string
-  userId: string
-  orderNumber: string
-  totalAmount: number
+  user_id: string
+  order_number: string
+  total_amount: number
   status: "pending" | "completed" | "cancelled"
-  stripePaymentId?: string
+  stripe_payment_id?: string
   shipping_address?: string
-  createdAt: string
-  updatedAt: string
-  items?: OrderItem[]
+  created_at: string
+  updated_at: string
+  order_items?: OrderItem[]
 }
 
 export interface OrderItem {
   id: string
-  orderId: string
-  productId: string
+  order_id: string
+  product_id: string
   quantity: number
   price: number
+  created_at?: string
 }
 
 // Generate unique order number

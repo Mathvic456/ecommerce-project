@@ -13,24 +13,29 @@ export default async function AdminLayout({
   const pathname = headerList.get("x-pathname") || ""
   
   // Routes that shouldn't have the admin layout or guards
-  // Note: Middleware protects /admin/* generally, but we check here too for defense in depth.
-  const isPublicAdminRoute = 
-    pathname.includes("/admin/login") || 
-    pathname.includes("/admin/unauthorized") || 
-    pathname.includes("/admin/first-admin-setup")
-
-  if (isPublicAdminRoute) {
-    return <>{children}</>
-  }
+  const isPublicAdminRoute = [
+    "/admin/login", 
+    "/admin/unauthorized", 
+    "/admin/first-admin-setup"
+  ].some(route => pathname === route || pathname.startsWith(route + "/"))
 
   // Server-side admin check
   const { isAdmin, user } = await checkIsAdmin()
+
+  // If it's a public route, just show the content (no sidebar)
+  if (isPublicAdminRoute) {
+    return <>{children}</>
+  }
 
   if (!isAdmin) {
     // If not admin, redirect to login or unauthorized
     if (!user) {
       redirect("/admin/login")
     } else {
+      // If we are already on unauthorized, just show it
+      if (pathname.includes("/admin/unauthorized")) {
+        return <>{children}</>
+      }
       redirect("/admin/unauthorized")
     }
   }

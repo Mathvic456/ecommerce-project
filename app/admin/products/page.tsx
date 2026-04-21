@@ -34,9 +34,9 @@ export default function AdminProducts() {
     name: "",
     description: "",
     categoryId: "",
-    priceUSD: "",
+    priceNGN: "",
     priceGBP: "",
-    priceEUR: "",
+    priceUSD: "",
     images: [
       { file: null as File | null, url: "" },
       { file: null as File | null, url: "" },
@@ -119,23 +119,23 @@ export default function AdminProducts() {
         return
       }
 
-      const priceUSD = Number.parseFloat(formData.priceUSD)
+      const priceNGN = Number.parseFloat(formData.priceNGN)
       const priceGBP = Number.parseFloat(formData.priceGBP)
-      const priceEUR = Number.parseFloat(formData.priceEUR)
+      const priceUSD = Number.parseFloat(formData.priceUSD)
 
-      if (!formData.priceUSD || !formData.priceGBP || !formData.priceEUR) {
-        setFormError("All price fields (USD, GBP, NGN) are required")
+      if (!formData.priceNGN || !formData.priceGBP || !formData.priceUSD) {
+        setFormError("All price fields (NGN, GBP, USD) are required")
         setIsSubmitting(false)
         return
       }
 
-      if (isNaN(priceUSD) || isNaN(priceGBP) || isNaN(priceEUR)) {
+      if (isNaN(priceNGN) || isNaN(priceGBP) || isNaN(priceUSD)) {
         setFormError("All prices must be valid numbers")
         setIsSubmitting(false)
         return
       }
 
-      if (priceUSD < 0 || priceGBP < 0 || priceEUR < 0) {
+      if (priceNGN < 0 || priceGBP < 0 || priceUSD < 0) {
         setFormError("Prices cannot be negative")
         setIsSubmitting(false)
         return
@@ -150,9 +150,9 @@ export default function AdminProducts() {
       console.log("[v0] Submitting product form:", {
         name: formData.name,
         categoryId: formData.categoryId,
-        priceUSD: Math.round(priceUSD * 100),
+        priceNGN: Math.round(priceNGN * 100),
         priceGBP: Math.round(priceGBP * 100),
-        priceEUR: Math.round(priceEUR * 100),
+        priceUSD: Math.round(priceUSD * 100),
         imageCount: validImages.length,
       })
 
@@ -164,9 +164,9 @@ export default function AdminProducts() {
             name: formData.name,
             description: formData.description,
             category_id: formData.categoryId || null,
-            price_usd: Math.round(priceUSD * 100),
+            price_ngn: Math.round(priceNGN * 100),
             price_gbp: Math.round(priceGBP * 100),
-            price_eur: Math.round(priceEUR * 100),
+            price_usd: Math.round(priceUSD * 100),
             updated_at: new Date().toISOString(),
           })
           .eq("id", editingId)
@@ -204,9 +204,9 @@ export default function AdminProducts() {
             name: formData.name,
             description: formData.description,
             category_id: formData.categoryId || null,
-            price_usd: Math.round(priceUSD * 100),
+            price_ngn: Math.round(priceNGN * 100),
             price_gbp: Math.round(priceGBP * 100),
-            price_eur: Math.round(priceEUR * 100),
+            price_usd: Math.round(priceUSD * 100),
           })
           .select()
           .single()
@@ -242,9 +242,9 @@ export default function AdminProducts() {
         name: "",
         description: "",
         categoryId: "",
-        priceUSD: "",
+        priceNGN: "",
         priceGBP: "",
-        priceEUR: "",
+        priceUSD: "",
         images: [
           { file: null, url: "" },
           { file: null, url: "" },
@@ -287,9 +287,9 @@ export default function AdminProducts() {
       name: product.name,
       description: product.description || "",
       categoryId: product.category_id || "",
-      priceUSD: product.price_usd ? (product.price_usd / 100).toString() : "",
+      priceNGN: product.price_ngn ? (product.price_ngn / 100).toString() : "",
       priceGBP: product.price_gbp ? (product.price_gbp / 100).toString() : "",
-      priceEUR: product.price_eur ? (product.price_eur / 100).toString() : "",
+      priceUSD: product.price_usd ? (product.price_usd / 100).toString() : "",
       images: newImages,
     })
     setShowForm(true)
@@ -316,9 +316,9 @@ export default function AdminProducts() {
               name: "",
               description: "",
               categoryId: "",
-              priceUSD: "",
+              priceNGN: "",
               priceGBP: "",
-              priceEUR: "",
+              priceUSD: "",
               images: [
                 { file: null, url: "" },
                 { file: null, url: "" },
@@ -375,19 +375,19 @@ export default function AdminProducts() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="priceUSD">Price NGN (₦)</Label>
+                  <Label htmlFor="priceNGN">Price NGN (₦)</Label>
                   <Input
-                    id="priceUSD"
+                    id="priceNGN"
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.priceUSD}
-                    onChange={(e) => setFormData({ ...formData, priceUSD: e.target.value })}
+                    value={formData.priceNGN}
+                    onChange={(e) => setFormData({ ...formData, priceNGN: e.target.value })}
                     required
                   />
                 </div>
                 <div>
-                  <Label htmlFor="priceGBP">Price GBP</Label>
+                  <Label htmlFor="priceGBP">Price GBP (£)</Label>
                   <Input
                     id="priceGBP"
                     type="number"
@@ -399,14 +399,14 @@ export default function AdminProducts() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="priceEUR">Price EUR</Label>
+                  <Label htmlFor="priceUSD">Price USD ($)</Label>
                   <Input
-                    id="priceEUR"
+                    id="priceUSD"
                     type="number"
                     step="0.01"
                     min="0"
-                    value={formData.priceEUR}
-                    onChange={(e) => setFormData({ ...formData, priceEUR: e.target.value })}
+                    value={formData.priceUSD}
+                    onChange={(e) => setFormData({ ...formData, priceUSD: e.target.value })}
                     required
                   />
                 </div>
@@ -510,7 +510,7 @@ export default function AdminProducts() {
                     <td className="px-6 py-3">{product.name}</td>
                     <td className="px-6 py-3 text-sm">{category?.name || "Uncategorized"}</td>
                     <td className="px-6 py-3 text-sm">
-                      ₦{(product.price_usd || 0) / 100} / £{(product.price_gbp || 0) / 100} / €{(product.price_eur || 0) / 100}
+                      ₦{(product.price_ngn || 0) / 100} / £{(product.price_gbp || 0) / 100} / ${(product.price_usd || 0) / 100}
                     </td>
                     <td className="px-6 py-3">
                       <div className="flex gap-2">

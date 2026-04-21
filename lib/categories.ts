@@ -23,7 +23,6 @@ export interface Product {
   price_usd?: number
   price_gbp?: number
   price_ngn?: number
-  price?: number
   image_url?: string
   imageUrl?: string
   created_at: string

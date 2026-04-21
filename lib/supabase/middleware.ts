@@ -2,12 +2,15 @@ import { type NextRequest, NextResponse } from "next/server"
 import { createServerClient } from "@supabase/ssr"
 
 export async function updateSession(request: NextRequest) {
+  // Set x-pathname header for server components via request headers
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set("x-pathname", request.nextUrl.pathname)
+
   const supabaseResponse = NextResponse.next({
-    request,
+    request: {
+      headers: requestHeaders,
+    },
   })
-  
-  // Set x-pathname header for server components
-  supabaseResponse.headers.set("x-pathname", request.nextUrl.pathname)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

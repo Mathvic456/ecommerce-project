@@ -27,6 +27,7 @@ export default function AdminOrders() {
         total_amount,
         status,
         stripe_payment_id,
+        shipping_address,
         created_at,
         updated_at,
         order_items (*)
