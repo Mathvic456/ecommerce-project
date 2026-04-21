@@ -100,7 +100,13 @@ export async function createCheckoutSession(
     await supabase.from("order_items").insert(orderItems)
 
     // 8. Initialize Paystack Transaction
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    // Priority: Custom domain → Vercel auto-URL → localhost (dev)
+    const baseUrl = 
+      process.env.NEXT_PUBLIC_APP_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+      "http://localhost:3000"
+
+    console.log("[Checkout] Using baseUrl for Paystack callback:", baseUrl)
 
     const paystackData = await paystack.initializeTransaction({
       email,
