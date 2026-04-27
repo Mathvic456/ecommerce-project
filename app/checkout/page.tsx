@@ -14,10 +14,11 @@ import type { CartItem, Product } from "@/lib/products"
 import { createCheckoutSession } from "@/app/actions/checkout"
 import { formatPrice, type Currency, getCurrencyFromStorage, getPriceForCurrency } from "@/lib/currency"
 import { getUserAddresses, addUserAddress } from "@/app/actions/user-profile"
-import { ChevronLeft, Lock, MapPin, Plus, Check, CreditCard, Loader2 } from "lucide-react"
+import { ChevronLeft, Lock, MapPin, Plus, Check, CreditCard, Loader2, Truck } from "lucide-react"
 import { countries, type CountryData } from "@/lib/countries"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
 import { CitySelector } from "@/components/city-selector"
+import { shippingOptions, calculateShippingCost } from "@/lib/shipping"
 
 interface ProductImage {
   id: string
@@ -46,6 +47,7 @@ export default function CheckoutPage() {
     city: "",
     postalCode: "",
   })
+  const [selectedShippingId, setSelectedShippingId] = useState<string>("standard")
   const supabase = createClient()
   const router = useRouter()
 
@@ -107,10 +109,13 @@ export default function CheckoutPage() {
     }
   }
 
-  const totalAmount = cartItems.reduce((sum, item) => {
+  const subtotalAmount = cartItems.reduce((sum, item) => {
     const price = getPriceForCurrency(item.products || {}, currency) || 0
     return sum + price * item.quantity
   }, 0)
+
+  const shippingCost = calculateShippingCost(selectedShippingId, subtotalAmount, currency)
+  const totalAmount = subtotalAmount + shippingCost
 
   const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -167,7 +172,7 @@ export default function CheckoutPage() {
     setProcessing(true)
 
     try {
-      const result = await createCheckoutSession(cartItems, email, user.id, currency, selectedAddressId || undefined)
+      const result = await createCheckoutSession(cartItems, email, user.id, currency, selectedAddressId || undefined, selectedShippingId)
 
       if (!result.success) {
         setError(result.error || "Checkout failed. Please try again.")
@@ -374,7 +379,48 @@ export default function CheckoutPage() {
               )}
             </section>
 
-            {/* Payment Section */}
+            {/* Shipping Options Section */}
+            <section>
+              <h2 className="text-sm font-medium uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Truck size={16} />
+                Shipping Method
+              </h2>
+              <div className="space-y-3">
+                {shippingOptions[currency]?.map((option) => {
+                  const currentCost = calculateShippingCost(option.id, subtotalAmount, currency)
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => setSelectedShippingId(option.id)}
+                      className={`w-full flex items-start gap-4 p-4 border text-left transition-colors ${
+                        selectedShippingId === option.id 
+                          ? "border-foreground bg-secondary" 
+                          : "border-border hover:border-foreground/50"
+                      }`}
+                    >
+                      <div className={`w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                        selectedShippingId === option.id 
+                          ? "border-foreground bg-foreground" 
+                          : "border-border"
+                      }`}>
+                        {selectedShippingId === option.id && (
+                          <Check size={12} className="text-background" />
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{option.name}</p>
+                        <p className="text-sm text-muted-foreground">{option.description}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{option.estimatedDays}</p>
+                      </div>
+                      <div className="text-right flex-shrink-0 font-medium">
+                        {currentCost === 0 ? "Free" : formatPrice(currentCost, currency)}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            </section>
             <section>
               <h2 className="text-sm font-medium uppercase tracking-wider mb-4">Payment</h2>
               <div className="p-4 border border-border bg-secondary flex items-center gap-4">
@@ -427,11 +473,11 @@ export default function CheckoutPage() {
               <div className="space-y-3 py-6 border-b border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal ({itemCount} items)</span>
-                  <span>{formatPrice(totalAmount, currency)}</span>
+                  <span>{formatPrice(subtotalAmount, currency)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>{totalAmount >= 5000000 ? "Free" : "Calculated next"}</span>
+                  <span>{shippingCost === 0 ? "Free" : formatPrice(shippingCost, currency)}</span>
                 </div>
               </div>
 

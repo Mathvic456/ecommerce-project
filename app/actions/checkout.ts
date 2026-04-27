@@ -5,6 +5,7 @@ import { getPriceForCurrency } from "@/lib/currency"
 import { paystack } from "@/lib/paystack"
 import { getAdminClient } from "@/lib/supabase/admin"
 import type { Currency } from "@/lib/currency"
+import { calculateShippingCost } from "@/lib/shipping"
 
 export async function createCheckoutSession(
   cartItems: any[],
@@ -12,6 +13,7 @@ export async function createCheckoutSession(
   user_id: string,
   currency: Currency = "NGN",
   addressId?: string,
+  shippingId: string = "standard",
 ) {
   try {
     const supabase = await createClient()
@@ -47,12 +49,8 @@ export async function createCheckoutSession(
       return sum + price * item.quantity
     }, 0)
 
-    // 4. Calculate Shipping
-    // Free shipping over 50,000 NGN (5,000,000 kobo)
-    let shippingFee = 0
-    if (currency === "NGN" && subtotal < 5000000) {
-      shippingFee = 500000 // 5,000 NGN
-    }
+    // 4. Calculate Shipping using the selected shipping option
+    const shippingFee = calculateShippingCost(shippingId, subtotal, currency)
 
     const totalAmount = subtotal + shippingFee
 
@@ -80,6 +78,9 @@ export async function createCheckoutSession(
         user_id: user.id,
         order_number: orderNumber,
         total_amount: totalAmount,
+        subtotal_amount: subtotal,
+        shipping_method: shippingId,
+        shipping_cost: shippingFee,
         status: "pending",
         shipping_address: shippingAddress,
       })

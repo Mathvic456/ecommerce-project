@@ -8,13 +8,17 @@ import { createClient } from "@/lib/supabase/client"
 import { Navbar } from "@/components/navbar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Receipt } from "@/components/receipt"
 import { CheckCircle } from "lucide-react"
 import Link from "next/link"
 import type { Order } from "@/lib/products"
+import { getCurrencyFromStorage, type Currency } from "@/lib/currency"
 
 export default function OrderSuccessPage() {
   const searchParams = useSearchParams()
   const [order, setOrder] = useState<Order | null>(null)
+  const [userEmail, setUserEmail] = useState<string>("")
+  const [currency, setCurrency] = useState<Currency>("NGN")
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
   const router = useRouter()
@@ -33,6 +37,9 @@ export default function OrderSuccessPage() {
         return
       }
 
+      setUserEmail(data.user.email || "")
+      setCurrency(getCurrencyFromStorage())
+
       const { data: orderData } = await supabase
         .from("orders")
         .select(
@@ -41,8 +48,12 @@ export default function OrderSuccessPage() {
           user_id,
           order_number,
           total_amount,
+          subtotal_amount,
+          shipping_method,
+          shipping_cost,
           status,
           stripe_payment_id,
+          shipping_address,
           created_at,
           updated_at,
           order_items (*)
@@ -106,21 +117,15 @@ export default function OrderSuccessPage() {
                       <p className="text-xl font-semibold capitalize">{order.status}</p>
                     </div>
                   </div>
-
-                  {order.order_items && order.order_items.length > 0 && (
-                    <div className="border-t border-border pt-4">
-                      <h4 className="font-semibold mb-2">Items in Order:</h4>
-                      <ul className="space-y-1">
-                        {order.order_items.map((item: any) => (
-                          <li key={item.id} className="text-sm">
-                            Quantity: {item.quantity} × ₦{(item.price / 100).toFixed(2)} = ₦
-                            {((item.quantity * item.price) / 100).toFixed(2)}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </div>
+
+                {/* Receipt Component */}
+                <Receipt 
+                  order={order} 
+                  currency={currency} 
+                  userEmail={userEmail}
+                  showDownloadButton={true}
+                />
 
                 <p className="text-sm text-muted-foreground text-center">
                   A confirmation email has been sent to your account. You can track your order status in your account

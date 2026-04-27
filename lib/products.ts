@@ -32,6 +32,9 @@ export interface Order {
   user_id: string
   order_number: string
   total_amount: number
+  subtotal_amount?: number
+  shipping_method?: string
+  shipping_cost?: number
   status: "pending" | "received" | "shipped" | "delivered" | "cancelled"
   stripe_payment_id?: string
   shipping_address?: string
@@ -47,6 +50,7 @@ export interface OrderItem {
   quantity: number
   price: number
   created_at?: string
+  products?: Product
 }
 
 // Generate unique order number
