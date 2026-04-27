@@ -1,30 +1,26 @@
 import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { MobileNav } from "@/components/mobile-nav"
 import { ThemeToggle } from "@/components/theme-toggle"
+import dynamic from "next/dynamic"
+
+const Footer = dynamic(() => import("@/components/footer").then((mod) => mod.Footer))
+const MobileNav = dynamic(() => import("@/components/mobile-nav").then((mod) => mod.MobileNav))
 import Link from "next/link"
 import { ArrowRight, Leaf, Heart, Shield, Truck } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"
+import { getCachedCategories, getCachedFeaturedProducts } from "@/lib/cache"
 import Image from "next/image"
 
-async function getFeaturedProducts() {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from("products")
-    .select("*, product_images(image_url), categories(name)")
-    .limit(8)
-  return data || []
-}
-
-async function getCategories() {
-  const supabase = await createClient()
-  const { data } = await supabase.from("categories").select("*").limit(4)
-  return data || []
-}
+// Revalidate every 5 minutes instead of on every request
+export const revalidate = 300
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedProducts()
-  const categories = await getCategories()
+  // Parallelize database queries for faster loading
+  const [featuredProducts, categories] = await Promise.all([
+    getCachedFeaturedProducts(8),
+    getCachedCategories(),
+  ])
+  
+  // Limit categories to 4 for homepage
+  const limitedCategories = categories.slice(0, 4)
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -41,8 +37,10 @@ export default async function Home() {
             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
             alt="Hero background"
             fill
+            sizes="100vw"
             className="object-cover"
             priority
+            quality={85}
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>
@@ -93,8 +91,8 @@ export default async function Home() {
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-            {categories.length > 0 ? (
-              categories.map((category, index) => (
+            {limitedCategories.length > 0 ? (
+              limitedCategories.map((category, index) => (
                 <Link
                   key={category.id}
                   href={`/categories/${category.id}`}
@@ -104,6 +102,7 @@ export default async function Home() {
                     src={category.image_url || `https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80`}
                     alt={category.name}
                     fill
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 300px"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
@@ -134,6 +133,7 @@ export default async function Home() {
                       src={`https://images.unsplash.com/photo-${index === 0 ? "1441986300917-64674bd600d8" : index === 1 ? "1472851294608-062f824d29cc" : index === 2 ? "1560472354-b33ff0c44a43" : "1556905055-8f358a7a47b2"}?w=600&q=80`}
                       alt={item.name}
                       fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 300px"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
@@ -183,6 +183,7 @@ export default async function Home() {
                         src={firstImage || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80"}
                         alt={product.name}
                         fill
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 300px"
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
@@ -269,6 +270,7 @@ export default async function Home() {
                 src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80"
                 alt="About Matthew's Mart"
                 fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
               />
             </div>

@@ -7,6 +7,7 @@ import type { Product } from "@/lib/categories"
 import { ShoppingCart } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { formatPrice, type Currency } from "@/lib/currency"
+import Image from "next/image"
 
 interface ProductImage {
   id: string
@@ -36,11 +37,13 @@ export function ProductCard({ product, currency, price, onAddToCart }: ProductCa
       className="border border-border rounded-lg overflow-hidden hover:shadow-lg transition cursor-pointer"
     >
       {firstImage && (
-        <div className="w-full h-48 bg-muted overflow-hidden">
-          <img
+        <div className="relative w-full h-48 bg-muted overflow-hidden">
+          <Image
             src={firstImage.image_url || "/placeholder.svg"}
             alt={product.name}
-            className="w-full h-full object-cover hover:scale-105 transition"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover hover:scale-105 transition"
           />
         </div>
       )}

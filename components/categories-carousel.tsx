@@ -5,6 +5,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import Image from "next/image"
 
 interface Category {
   id: string
@@ -68,10 +69,12 @@ export function CategoriesCarousel() {
               className="flex-shrink-0 w-full lg:w-1/3 group cursor-pointer"
             >
               <div className="relative h-80 bg-secondary rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={category.image_url || "/placeholder.svg"}
                   alt={category.name}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors flex items-end p-6">
                   <h3 className="text-white text-2xl font-bold text-balance">{category.name}</h3>
