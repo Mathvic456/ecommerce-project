@@ -10,7 +10,7 @@ import { MobileNav } from "@/components/mobile-nav"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import type { Order } from "@/lib/products"
-import { getUserProfile, getUserAddresses } from "@/app/actions/user-profile"
+import { getUserProfile, getUserAddresses, saveUserProfile } from "@/app/actions/user-profile"
 import { ProfileEditor } from "@/components/user/profile-editor"
 import { AddressManager } from "@/components/user/address-manager"
 import { Package, User, MapPin, LogOut, ChevronRight, ShoppingBag, Clock, Loader2 } from "lucide-react"
@@ -41,6 +41,35 @@ export default function AccountPage() {
       try {
         const profileData = await getUserProfile()
         setProfile(profileData)
+
+        // If no profile exists, check for pending profile from signup and save it
+        if (!profileData) {
+          const pendingProfileStr = localStorage.getItem("pendingUserProfile")
+          if (pendingProfileStr) {
+            try {
+              const pendingProfile = JSON.parse(pendingProfileStr)
+              // Verify the email matches the current user
+              if (pendingProfile.email === data.user.email) {
+                await saveUserProfile(
+                  pendingProfile.firstName,
+                  pendingProfile.lastName,
+                  pendingProfile.phoneNumber,
+                  pendingProfile.streetAddress,
+                  pendingProfile.city,
+                  pendingProfile.country,
+                  pendingProfile.postalCode
+                )
+                // Refetch profile after saving
+                const updatedProfile = await getUserProfile()
+                setProfile(updatedProfile)
+                // Clear the pending profile
+                localStorage.removeItem("pendingUserProfile")
+              }
+            } catch (saveError) {
+              console.log("[v0] Error saving pending profile:", saveError)
+            }
+          }
+        }
       } catch (error) {
         console.log("[v0] Error fetching profile:", error)
       }

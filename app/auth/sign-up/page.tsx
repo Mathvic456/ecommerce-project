@@ -10,7 +10,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { saveUserProfile } from "@/app/actions/user-profile"
 import { validateSignupForm, validateProfileForm } from "@/lib/validation"
-import { countries, type CountryData, validatePhoneForCountry, formatPhoneWithCountryCode } from "@/lib/countries"
+import { countries, type CountryData, type StateData, validatePhoneForCountry, formatPhoneWithCountryCode } from "@/lib/countries"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
 import Image from "next/image"
 
@@ -25,6 +25,7 @@ export default function SignUpPage() {
   const [streetAddress, setStreetAddress] = useState("")
   const [city, setCity] = useState("")
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
+  const [selectedState, setSelectedState] = useState<StateData | null>(null)
   const [postalCode, setPostalCode] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
@@ -35,6 +36,7 @@ export default function SignUpPage() {
   const handleCountryChange = (countryCode: string) => {
     const country = countries.find(c => c.code === countryCode)
     setSelectedCountry(country || null)
+    setSelectedState(null)
     setPhoneNumber("")
     // Auto-populate postal code with country's placeholder/default value
     setPostalCode(country?.postalCodePlaceholder || "")
@@ -46,6 +48,14 @@ export default function SignUpPage() {
         return rest
       })
     }
+  }
+
+  // Handle state change - update postal code
+  const handleStateChange = (stateCode: string) => {
+    const state = selectedCountry?.states?.find(s => s.code === stateCode)
+    setSelectedState(state || null)
+    // Update postal code with state's placeholder
+    setPostalCode(state?.postalCodePlaceholder || selectedCountry?.postalCodePlaceholder || "")
   }
 
   // Format phone number as user types (only digits)
@@ -129,6 +139,12 @@ export default function SignUpPage() {
       return
     }
 
+    // Validate state selection if country has states
+    if (selectedCountry.states && selectedCountry.states.length > 0 && !selectedState) {
+      setFieldErrors({ state: "Please select a state/region" })
+      return
+    }
+
     // Validate phone for selected country
     const phoneError = validatePhoneForCountry(phoneNumber, selectedCountry.code)
     if (phoneError) {
@@ -165,6 +181,7 @@ export default function SignUpPage() {
         streetAddress,
         city,
         country: selectedCountry.name,
+        state: selectedState?.name || null,
         postalCode,
         email, // Store email to match the profile to the user
       }
@@ -354,6 +371,30 @@ export default function SignUpPage() {
                 )}
                 {fieldErrors.phone && <p className="text-xs text-destructive">{fieldErrors.phone}</p>}
               </div>
+
+              {/* State/Region Selector - only show if country has states */}
+              {selectedCountry?.states && selectedCountry.states.length > 0 && (
+                <div className="space-y-2">
+                  <Label htmlFor="state" className="text-xs uppercase tracking-wider text-muted-foreground">
+                    State/Region
+                  </Label>
+                  <select
+                    id="state"
+                    value={selectedState?.code || ""}
+                    onChange={(e) => handleStateChange(e.target.value)}
+                    className="h-12 w-full border-0 border-b border-border bg-transparent text-sm focus:outline-none focus:border-primary"
+                    required
+                  >
+                    <option value="">Select a state/region</option>
+                    {selectedCountry.states.map((state) => (
+                      <option key={state.code} value={state.code}>
+                        {state.name}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldErrors.state && <p className="text-xs text-destructive">{fieldErrors.state}</p>}
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label htmlFor="streetAddress" className="text-xs uppercase tracking-wider text-muted-foreground">

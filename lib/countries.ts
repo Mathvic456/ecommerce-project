@@ -1,3 +1,9 @@
+export interface StateData {
+  name: string
+  code: string
+  postalCodePlaceholder?: string
+}
+
 export interface CountryData {
   name: string
   code: string
@@ -6,10 +12,27 @@ export interface CountryData {
   phoneLength: number | [number, number] // exact or range [min, max]
   postalCodeFormat?: string
   postalCodePlaceholder?: string
+  states?: StateData[]
 }
 
 export const countries: CountryData[] = [
-  { name: "United States", code: "US", dialCode: "+1", flag: "\u{1F1FA}\u{1F1F8}", phoneLength: 10, postalCodeFormat: "^\\d{5}(-\\d{4})?$", postalCodePlaceholder: "12345" },
+  { 
+    name: "United States", 
+    code: "US", 
+    dialCode: "+1", 
+    flag: "\u{1F1FA}\u{1F1F8}", 
+    phoneLength: 10, 
+    postalCodeFormat: "^\\d{5}(-\\d{4})?$", 
+    postalCodePlaceholder: "12345",
+    states: [
+      { name: "California", code: "CA", postalCodePlaceholder: "90210" },
+      { name: "New York", code: "NY", postalCodePlaceholder: "10001" },
+      { name: "Texas", code: "TX", postalCodePlaceholder: "75001" },
+      { name: "Florida", code: "FL", postalCodePlaceholder: "33101" },
+      { name: "Illinois", code: "IL", postalCodePlaceholder: "60601" },
+      // Add more as needed
+    ]
+  },
   { name: "United Kingdom", code: "GB", dialCode: "+44", flag: "\u{1F1EC}\u{1F1E7}", phoneLength: 10, postalCodeFormat: "^[A-Z]{1,2}\\d[A-Z\\d]? ?\\d[A-Z]{2}$", postalCodePlaceholder: "SW1A 1AA" },
   { name: "Canada", code: "CA", dialCode: "+1", flag: "\u{1F1E8}\u{1F1E6}", phoneLength: 10, postalCodeFormat: "^[A-Z]\\d[A-Z] ?\\d[A-Z]\\d$", postalCodePlaceholder: "K1A 0B1" },
   { name: "Australia", code: "AU", dialCode: "+61", flag: "\u{1F1E6}\u{1F1FA}", phoneLength: 9, postalCodeFormat: "^\\d{4}$", postalCodePlaceholder: "2000" },
@@ -40,7 +63,23 @@ export const countries: CountryData[] = [
   { name: "Saudi Arabia", code: "SA", dialCode: "+966", flag: "\u{1F1F8}\u{1F1E6}", phoneLength: 9, postalCodeFormat: "^\\d{5}$", postalCodePlaceholder: "11564" },
   { name: "Israel", code: "IL", dialCode: "+972", flag: "\u{1F1EE}\u{1F1F1}", phoneLength: 9, postalCodeFormat: "^\\d{7}$", postalCodePlaceholder: "1234567" },
   { name: "South Africa", code: "ZA", dialCode: "+27", flag: "\u{1F1FF}\u{1F1E6}", phoneLength: 9, postalCodeFormat: "^\\d{4}$", postalCodePlaceholder: "0001" },
-  { name: "Nigeria", code: "NG", dialCode: "+234", flag: "\u{1F1F3}\u{1F1EC}", phoneLength: 10, postalCodeFormat: "^\\d{6}$", postalCodePlaceholder: "100001" },
+  { 
+    name: "Nigeria", 
+    code: "NG", 
+    dialCode: "+234", 
+    flag: "\u{1F1F3}\u{1F1EC}", 
+    phoneLength: 10, 
+    postalCodeFormat: "^\\d{6}$", 
+    postalCodePlaceholder: "100001",
+    states: [
+      { name: "Lagos", code: "LA", postalCodePlaceholder: "100001" },
+      { name: "Abuja", code: "FC", postalCodePlaceholder: "900001" },
+      { name: "Kano", code: "KN", postalCodePlaceholder: "700001" },
+      { name: "Rivers", code: "RI", postalCodePlaceholder: "500001" },
+      { name: "Oyo", code: "OY", postalCodePlaceholder: "200001" },
+      // Add more as needed
+    ]
+  },
   { name: "Kenya", code: "KE", dialCode: "+254", flag: "\u{1F1F0}\u{1F1EA}", phoneLength: 9, postalCodeFormat: "^\\d{5}$", postalCodePlaceholder: "00100" },
   { name: "Egypt", code: "EG", dialCode: "+20", flag: "\u{1F1EA}\u{1F1EC}", phoneLength: 10, postalCodeFormat: "^\\d{5}$", postalCodePlaceholder: "11511" },
   { name: "Brazil", code: "BR", dialCode: "+55", flag: "\u{1F1E7}\u{1F1F7}", phoneLength: [10, 11], postalCodeFormat: "^\\d{5}-\\d{3}$", postalCodePlaceholder: "01310-100" },
