@@ -38,16 +38,15 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
       <div className={`${isMobileMenuOpen ? "block" : "hidden"} md:block w-64 border-r border-border bg-secondary p-6 h-screen sticky top-0`}>
         <div className="flex flex-col h-full">
           <Link href="/" className="text-xl font-serif mb-8 block hover:opacity-60 transition-opacity">
-            LuxuryByEsta
+            Matthew's Mart
           </Link>
           <nav className="space-y-1 flex-1">
             {adminLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`block px-4 py-2 text-sm tracking-wide transition-colors ${
-                  pathname === link.href ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                }`}
+                className={`block px-4 py-2 text-sm tracking-wide transition-colors ${pathname === link.href ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {link.label}
               </Link>
@@ -55,10 +54,10 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
           </nav>
           <div className="pt-6 border-t border-border">
             <div className="mb-4 px-4 overflow-hidden flex justify-between items-center">
-               <div className="overflow-hidden">
-                 <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
-               </div>
-               <ModeToggle />
+              <div className="overflow-hidden">
+                <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              </div>
+              <ModeToggle />
             </div>
             <Button variant="ghost" className="w-full justify-start flex items-center gap-2 text-sm" onClick={handleLogout}>
               <LogOut size={16} />
@@ -70,7 +69,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
       {/* Top Bar for Mobile */}
       <div className="border-b border-border p-4 flex justify-between items-center md:hidden bg-secondary sticky top-0 z-50">
-        <Link href="/" className="text-lg font-serif">LuxuryByEsta</Link>
+        <Link href="/" className="text-lg font-serif">Matthew's Mart</Link>
         <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="p-2">
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -78,8 +77,8 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
 
       {/* Overlay for Mobile */}
       {isMobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}

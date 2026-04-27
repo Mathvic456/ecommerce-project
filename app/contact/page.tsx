@@ -25,10 +25,10 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    
+
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500))
-    
+
     setIsSubmitting(false)
     setIsSubmitted(true)
     setFormState({ name: "", email: "", subject: "", message: "" })
@@ -64,7 +64,7 @@ export default function ContactPage() {
             <div>
               <h2 className="text-xl font-serif mb-6">Get in Touch</h2>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Have a question about your order, our products, or just want to say hello? 
+                Have a question about your order, our products, or just want to say hello?
                 We are here to help and would love to hear from you.
               </p>
             </div>
@@ -76,7 +76,7 @@ export default function ContactPage() {
                 </div>
                 <div>
                   <h3 className="font-medium mb-1">Email</h3>
-                  <p className="text-muted-foreground text-sm">support@luxurybyesta.com</p>
+                  <p className="text-muted-foreground text-sm">support@Matthew's Mart.com</p>
                 </div>
               </div>
 

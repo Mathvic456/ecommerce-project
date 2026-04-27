@@ -54,12 +54,11 @@ export function Navbar() {
       </div>
 
       {/* Main Navbar */}
-      <nav 
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled 
-            ? "bg-background/95 backdrop-blur-md shadow-sm" 
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled
+            ? "bg-background/95 backdrop-blur-md shadow-sm"
             : "bg-background"
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 lg:h-20">
@@ -72,8 +71,8 @@ export function Navbar() {
               >
                 {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
-              <Link 
-                href="/search" 
+              <Link
+                href="/search"
                 className="hidden sm:flex items-center gap-2 text-sm hover:opacity-60 transition-opacity"
               >
                 <Search size={18} />
@@ -82,31 +81,31 @@ export function Navbar() {
             </div>
 
             {/* Center - Logo */}
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="absolute left-1/2 -translate-x-1/2 text-2xl lg:text-3xl font-serif tracking-wider hover:opacity-60 transition-opacity"
             >
-              LuxuryByEsta
+              Matthew's Mart
             </Link>
 
             {/* Right - Account & Cart */}
             <div className="flex items-center gap-4 lg:gap-6">
-              <Link 
-                href="/search" 
+              <Link
+                href="/search"
                 className="sm:hidden p-2 hover:opacity-60 transition-opacity"
                 aria-label="Search"
               >
                 <Search size={20} />
               </Link>
-              <Link 
-                href={user ? "/account" : "/auth/login"} 
+              <Link
+                href={user ? "/account" : "/auth/login"}
                 className="p-2 hover:opacity-60 transition-opacity"
                 aria-label="Account"
               >
                 <User size={20} />
               </Link>
-              <Link 
-                href="/cart" 
+              <Link
+                href="/cart"
                 className="relative p-2 hover:opacity-60 transition-opacity"
                 aria-label="Cart"
               >
@@ -125,26 +124,26 @@ export function Navbar() {
         <div className="hidden lg:block border-t border-border">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-center gap-12 py-4">
-              <Link 
-                href="/categories" 
+              <Link
+                href="/categories"
                 className="text-sm tracking-wider uppercase hover:opacity-60 transition-opacity"
               >
                 Shop All
               </Link>
-              <Link 
-                href="/new-arrivals" 
+              <Link
+                href="/new-arrivals"
                 className="text-sm tracking-wider uppercase hover:opacity-60 transition-opacity"
               >
                 New Arrivals
               </Link>
-              <Link 
-                href="/categories?category=bestsellers" 
+              <Link
+                href="/categories?category=bestsellers"
                 className="text-sm tracking-wider uppercase hover:opacity-60 transition-opacity"
               >
                 Best Sellers
               </Link>
-              <Link 
-                href="/collections" 
+              <Link
+                href="/collections"
                 className="text-sm tracking-wider uppercase hover:opacity-60 transition-opacity"
               >
                 Collections
@@ -156,53 +155,53 @@ export function Navbar() {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-background animate-fade-in"
           style={{ top: "calc(2rem + 4rem)" }}
         >
           <div className="max-w-7xl mx-auto px-6 py-8">
             <nav className="flex flex-col gap-6">
-              <Link 
+              <Link
                 href="/"
                 className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity animate-fade-up"
               >
                 Home
               </Link>
-              <Link 
+              <Link
                 href="/categories"
                 className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity animate-fade-up stagger-1"
               >
                 Shop All
               </Link>
-              <Link 
+              <Link
                 href="/new-arrivals"
                 className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity animate-fade-up stagger-2"
               >
                 New Arrivals
               </Link>
-              <Link 
+              <Link
                 href="/categories?category=bestsellers"
                 className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity animate-fade-up stagger-3"
               >
                 Best Sellers
               </Link>
-              <Link 
+              <Link
                 href="/collections"
                 className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity animate-fade-up stagger-4"
               >
                 Collections
               </Link>
-              
+
               <div className="border-t border-border pt-6 mt-4">
                 {user ? (
                   <>
-                    <Link 
+                    <Link
                       href="/account"
                       className="block text-lg mb-4 hover:opacity-60 transition-opacity"
                     >
                       My Account
                     </Link>
-                    <button 
+                    <button
                       onClick={async () => {
                         await supabase.auth.signOut()
                         setUser(null)
@@ -214,7 +213,7 @@ export function Navbar() {
                     </button>
                   </>
                 ) : (
-                  <Link 
+                  <Link
                     href="/auth/login"
                     className="text-lg hover:opacity-60 transition-opacity"
                   >

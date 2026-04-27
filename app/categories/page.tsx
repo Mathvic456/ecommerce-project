@@ -120,11 +120,10 @@ export default function CategoriesPage() {
           <div className="flex items-center gap-1 py-4">
             <button
               onClick={() => setSelectedCategory(null)}
-              className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${
-                !selectedCategory 
-                  ? "bg-primary text-primary-foreground" 
+              className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${!selectedCategory
+                  ? "bg-primary text-primary-foreground"
                   : "hover:bg-secondary"
-              }`}
+                }`}
             >
               All
             </button>
@@ -132,11 +131,10 @@ export default function CategoriesPage() {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${
-                  selectedCategory === category.id 
-                    ? "bg-primary text-primary-foreground" 
+                className={`px-4 py-2 text-sm whitespace-nowrap transition-colors ${selectedCategory === category.id
+                    ? "bg-primary text-primary-foreground"
                     : "hover:bg-secondary"
-                }`}
+                  }`}
               >
                 {category.name}
               </button>
@@ -272,7 +270,7 @@ export default function CategoriesPage() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                      {product.categories?.name || "LuxuryByEsta"}
+                      {product.categories?.name || "Matthew's Mart"}
                     </p>
                     <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                       {product.name}
@@ -300,7 +298,7 @@ export default function CategoriesPage() {
                   </div>
                   <div className="flex-1 py-2">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {product.categories?.name || "LuxuryByEsta"}
+                      {product.categories?.name || "Matthew's Mart"}
                     </p>
                     <h3 className="font-medium mb-2 group-hover:opacity-60 transition-opacity">
                       {product.name}

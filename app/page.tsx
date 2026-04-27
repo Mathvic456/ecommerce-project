@@ -59,13 +59,13 @@ export default async function Home() {
             Discover our curated collection of exceptional products designed for the discerning customer
           </p>
           <div className="flex flex-wrap justify-center gap-4 pt-4 animate-fade-up stagger-2">
-            <Link 
+            <Link
               href="/categories"
               className="px-8 py-4 bg-white text-black text-sm tracking-wider uppercase hover:bg-white/90 transition-colors"
             >
               Shop Now
             </Link>
-            <Link 
+            <Link
               href="/collections"
               className="px-8 py-4 border border-white text-white text-sm tracking-wider uppercase hover:bg-white/10 transition-colors"
             >
@@ -95,8 +95,8 @@ export default async function Home() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {categories.length > 0 ? (
               categories.map((category, index) => (
-                <Link 
-                  key={category.id} 
+                <Link
+                  key={category.id}
                   href={`/categories/${category.id}`}
                   className="group relative aspect-[3/4] overflow-hidden img-zoom"
                 >
@@ -125,8 +125,8 @@ export default async function Home() {
                   { name: "Featured", href: "/categories" },
                   { name: "Collections", href: "/collections" },
                 ].map((item, index) => (
-                  <Link 
-                    key={item.name} 
+                  <Link
+                    key={item.name}
                     href={item.href}
                     className="group relative aspect-[3/4] overflow-hidden img-zoom"
                   >
@@ -163,7 +163,7 @@ export default async function Home() {
                 Hand-picked selections from our premium collection
               </p>
             </div>
-            <Link 
+            <Link
               href="/categories"
               className="inline-flex items-center gap-2 text-sm tracking-wider uppercase mt-4 md:mt-0 hover:opacity-60 transition-opacity"
             >
@@ -188,7 +188,7 @@ export default async function Home() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                        {product.categories?.name || "LuxuryByEsta"}
+                        {product.categories?.name || "Matthew's Mart"}
                       </p>
                       <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                         {product.name}
@@ -213,7 +213,7 @@ export default async function Home() {
       <section className="py-20 lg:py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4">Why Choose LuxuryByEsta</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-4">Why Choose Matthew's Mart</h2>
             <p className="text-muted-foreground max-w-lg mx-auto">
               We believe in quality, sustainability, and exceptional customer service
             </p>
@@ -267,29 +267,29 @@ export default async function Home() {
             <div className="relative aspect-[4/5] overflow-hidden img-zoom">
               <Image
                 src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&q=80"
-                alt="About LuxuryByEsta"
+                alt="About Matthew's Mart"
                 fill
                 className="object-cover"
               />
             </div>
             <div className="space-y-6">
               <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground">About Us</p>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif">The LuxuryByEsta Story</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif">The Matthew's Mart Story</h2>
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  LuxuryByEsta was founded with a simple mission: to bring exceptional quality products 
+                  Matthew's Mart was founded with a simple mission: to bring exceptional quality products
                   to discerning customers who appreciate the finer things in life.
                 </p>
                 <p>
-                  We believe that quality should never be compromised. Every product in our 
+                  We believe that quality should never be compromised. Every product in our
                   collection is carefully selected and vetted to ensure it meets our high standards.
                 </p>
                 <p>
-                  Our commitment to excellence extends beyond our products to our customer service. 
+                  Our commitment to excellence extends beyond our products to our customer service.
                   We're here to help you find exactly what you're looking for.
                 </p>
               </div>
-              <Link 
+              <Link
                 href="/categories"
                 className="inline-flex items-center gap-2 text-sm tracking-wider uppercase hover:opacity-60 transition-opacity"
               >
@@ -351,9 +351,9 @@ export default async function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif mb-6">Ready to Discover?</h2>
           <p className="text-primary-foreground/70 max-w-lg mx-auto mb-8">
-            Join thousands of satisfied customers who have elevated their lifestyle with LuxuryByEsta products.
+            Join thousands of satisfied customers who have elevated their lifestyle with Matthew's Mart products.
           </p>
-          <Link 
+          <Link
             href="/categories"
             className="inline-block px-8 py-4 bg-primary-foreground text-primary text-sm tracking-wider uppercase hover:opacity-90 transition-opacity"
           >

@@ -7,29 +7,29 @@ import "./globals.css"
 
 export const dynamic = "force-dynamic"
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
 })
 
-const playfair = Playfair_Display({ 
+const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair",
   display: "swap",
 })
 
 export const metadata: Metadata = {
-  title: "LuxuryByEsta | Premium Quality Products",
-  description: "Discover premium quality products at LuxuryByEsta. Shop our curated collection of exceptional items.",
+  title: "Matthew's Mart | Premium Quality Products",
+  description: "Discover premium quality products at Matthew's Mart. Shop our curated collection of exceptional items.",
   keywords: ["ecommerce", "premium", "quality", "shopping", "luxury"],
-  authors: [{ name: "LuxuryByEsta" }],
+  authors: [{ name: "Matthew's Mart" }],
   openGraph: {
-    title: "LuxuryByEsta | Premium Quality Products",
-    description: "Discover premium quality products at LuxuryByEsta",
+    title: "Matthew's Mart | Premium Quality Products",
+    description: "Discover premium quality products at Matthew's Mart",
     type: "website",
   },
-    generator: 'v0.app'
+  generator: 'v0.app'
 }
 
 export const viewport: Viewport = {

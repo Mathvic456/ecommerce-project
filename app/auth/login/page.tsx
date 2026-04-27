@@ -50,7 +50,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-12">
             <Link href="/" className="text-2xl font-serif tracking-wider hover:opacity-60 transition-opacity">
-              LuxuryByEsta
+              Matthew's Mart
             </Link>
           </div>
 
@@ -88,9 +88,8 @@ export default function LoginPage() {
                 spellCheck={false}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`w-full h-12 px-4 border bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow ${
-                  fieldErrors.email ? "border-destructive" : "border-border"
-                }`}
+                className={`w-full h-12 px-4 border bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow ${fieldErrors.email ? "border-destructive" : "border-border"
+                  }`}
               />
               {fieldErrors.email && <p className="mt-2 text-xs text-destructive">{fieldErrors.email}</p>}
             </div>
@@ -106,9 +105,8 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`w-full h-12 px-4 border bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow ${
-                  fieldErrors.password ? "border-destructive" : "border-border"
-                }`}
+                className={`w-full h-12 px-4 border bg-background focus:outline-none focus:ring-2 focus:ring-ring transition-shadow ${fieldErrors.password ? "border-destructive" : "border-border"
+                  }`}
               />
               {fieldErrors.password && <p className="mt-2 text-xs text-destructive">{fieldErrors.password}</p>}
             </div>
@@ -145,7 +143,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Image (Desktop only) */}
-      <div 
+      <div
         className="hidden lg:block lg:w-1/2 bg-cover bg-center"
         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80')" }}
       >

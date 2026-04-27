@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { getPriceForCurrency } from "@/lib/currency"
 import { paystack } from "@/lib/paystack"
+import { getAdminClient } from "@/lib/supabase/admin"
 import type { Currency } from "@/lib/currency"
 
 export async function createCheckoutSession(
@@ -71,8 +72,9 @@ export async function createCheckoutSession(
 
     const orderNumber = Math.random().toString(36).substring(7).toUpperCase()
 
-    // 6. Create Order in Pending state
-    const { data: order, error: orderError } = await supabase
+    // 6. Create Order in Pending state using Admin Client (bypassing RLS)
+    const adminClient = getAdminClient()
+    const { data: order, error: orderError } = await adminClient
       .from("orders")
       .insert({
         user_id: user.id,
@@ -97,7 +99,8 @@ export async function createCheckoutSession(
       }
     })
 
-    await supabase.from("order_items").insert(orderItems)
+    // Insert order items using Admin Client (bypassing normal user RLS insert blocks)
+    await adminClient.from("order_items").insert(orderItems)
 
     // 8. Initialize Paystack Transaction
     // Priority: Custom domain → Vercel auto-URL → localhost (dev)
@@ -120,7 +123,7 @@ export async function createCheckoutSession(
     })
 
     // Update order with Paystack reference
-    await supabase
+    await adminClient
       .from("orders")
       .update({ stripe_payment_id: paystackData.reference }) // Using existing column for reference
       .eq("id", order.id)

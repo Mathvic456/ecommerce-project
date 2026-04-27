@@ -120,7 +120,7 @@ export default function SearchPage() {
         {/* Search Header */}
         <div className="text-center mb-12">
           <h1 className="text-3xl lg:text-5xl font-serif mb-8">Search</h1>
-          
+
           {/* Search Input */}
           <form onSubmit={handleSearch} className="relative max-w-2xl mx-auto">
             <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -152,7 +152,7 @@ export default function SearchPage() {
                 {searching ? "Searching..." : `${filteredProducts.length} result${filteredProducts.length !== 1 ? "s" : ""}`}
               </h2>
               {filteredProducts.length > 0 && (
-                <Link 
+                <Link
                   href={`/categories?search=${encodeURIComponent(searchQuery)}`}
                   className="text-sm flex items-center gap-1 hover:opacity-60 transition-opacity"
                 >
@@ -179,7 +179,7 @@ export default function SearchPage() {
                       </div>
                       <div className="space-y-1">
                         <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                          {product.categories?.name || "LuxuryByEsta"}
+                          {product.categories?.name || "Matthew's Mart"}
                         </p>
                         <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                           {product.name}
@@ -265,7 +265,7 @@ export default function SearchPage() {
                         </div>
                         <div className="space-y-1">
                           <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                            {product.categories?.name || "LuxuryByEsta"}
+                            {product.categories?.name || "Matthew's Mart"}
                           </p>
                           <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                             {product.name}

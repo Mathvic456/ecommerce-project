@@ -38,7 +38,7 @@ export default function SignUpPage() {
     setPhoneNumber("")
     // Auto-populate postal code with country's placeholder/default value
     setPostalCode(country?.postalCodePlaceholder || "")
-    
+
     // Clear phone error when country changes
     if (fieldErrors.phone) {
       setFieldErrors(prev => {
@@ -53,11 +53,11 @@ export default function SignUpPage() {
     const value = e.target.value
     // Only allow digits
     const digitsOnly = value.replace(/\D/g, "")
-    
+
     // Limit based on country max length
     if (selectedCountry) {
-      const maxLength = Array.isArray(selectedCountry.phoneLength) 
-        ? selectedCountry.phoneLength[1] 
+      const maxLength = Array.isArray(selectedCountry.phoneLength)
+        ? selectedCountry.phoneLength[1]
         : selectedCountry.phoneLength
       setPhoneNumber(digitsOnly.slice(0, maxLength))
     } else {
@@ -85,9 +85,9 @@ export default function SignUpPage() {
     try {
       // Use production site URL, fallback to window.location.origin for local dev
       const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin
-      
+
       console.log("[v0] SignUp - Using redirect URL:", `${siteUrl}/auth/confirm`)
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -95,14 +95,14 @@ export default function SignUpPage() {
           emailRedirectTo: `${siteUrl}/auth/confirm`,
         },
       })
-      
+
       if (error) {
         console.log("[v0] SignUp Error:", error.message)
         throw error
       }
-      
+
       console.log("[v0] SignUp Success - user:", data.user?.id, "session:", !!data.session)
-      
+
       // Check if email confirmation is disabled (user gets session immediately)
       if (data.session) {
         console.log("[v0] User confirmed immediately (email confirmation disabled)")
@@ -110,7 +110,7 @@ export default function SignUpPage() {
         window.location.href = "/account"
         return
       }
-      
+
       setStep(2)
     } catch (error: unknown) {
       setFieldErrors({ form: error instanceof Error ? error.message : "An error occurred" })
@@ -155,7 +155,7 @@ export default function SignUpPage() {
     try {
       // Format phone with country code
       const fullPhoneNumber = formatPhoneWithCountryCode(phoneNumber, selectedCountry.dialCode)
-      
+
       // Store profile data in localStorage to be saved after email confirmation
       // The user is NOT authenticated until they confirm their email
       const pendingProfile = {
@@ -206,7 +206,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-            LuxuryByEsta
+            Matthew's Mart
           </Link>
           <h1 className="text-3xl font-light tracking-tight mt-6 mb-2">
             {step === 1 ? "Create account" : "Complete profile"}
@@ -320,14 +320,14 @@ export default function SignUpPage() {
                     onSelect={handleCountryChange}
                     required
                   />
-                  
+
                   {/* Country Code Display */}
                   {selectedCountry && (
                     <span className="text-muted-foreground whitespace-nowrap px-2 border-r border-border text-sm">
                       {selectedCountry.dialCode}
                     </span>
                   )}
-                  
+
                   {/* Phone Input */}
                   <Input
                     id="phoneNumber"
@@ -346,7 +346,7 @@ export default function SignUpPage() {
                 {fieldErrors.country && <p className="text-xs text-destructive">{fieldErrors.country}</p>}
                 {selectedCountry && (
                   <p className="text-xs text-muted-foreground">
-                    {Array.isArray(selectedCountry.phoneLength) 
+                    {Array.isArray(selectedCountry.phoneLength)
                       ? `${selectedCountry.phoneLength[0]}-${selectedCountry.phoneLength[1]} digits required`
                       : `${selectedCountry.phoneLength} digits required`}
                     {phoneNumber && ` (${phoneNumber.length} entered)`}

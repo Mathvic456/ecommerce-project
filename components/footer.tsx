@@ -58,10 +58,10 @@ export function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="text-2xl font-serif tracking-wider">
-              LuxuryByEsta
+              Matthew's Mart
             </Link>
             <p className="mt-4 text-primary-foreground/70 text-sm leading-relaxed">
-              Curating premium quality products for the discerning customer. 
+              Curating premium quality products for the discerning customer.
               Excellence in every detail.
             </p>
             <div className="flex gap-4 mt-6">
@@ -165,7 +165,7 @@ export function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-primary-foreground/60 text-xs">
-              &copy; {new Date().getFullYear()} LuxuryByEsta. All rights reserved.
+              &copy; {new Date().getFullYear()} Matthew's Mart. All rights reserved.
             </p>
             <div className="flex gap-6">
               <Link href="/privacy" className="text-primary-foreground/60 hover:text-primary-foreground transition-colors text-xs">

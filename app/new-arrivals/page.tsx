@@ -150,7 +150,7 @@ export default function NewArrivalsPage() {
               const firstImage = product.product_images?.[0]?.image_url
               const price = getPriceForCurrency(product, currency)
               const daysSince = getDaysSinceUpload(product.created_at)
-              
+
               return (
                 <Link key={product.id} href={`/products/${product.id}`} className="group">
                   <div className="relative aspect-[3/4] overflow-hidden mb-4 bg-secondary">
@@ -167,7 +167,7 @@ export default function NewArrivalsPage() {
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                      {product.categories?.name || "LuxuryByEsta"}
+                      {product.categories?.name || "Matthew's Mart"}
                     </p>
                     <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                       {product.name}
@@ -184,7 +184,7 @@ export default function NewArrivalsPage() {
               const firstImage = product.product_images?.[0]?.image_url
               const price = getPriceForCurrency(product, currency)
               const daysSince = getDaysSinceUpload(product.created_at)
-              
+
               return (
                 <Link key={product.id} href={`/products/${product.id}`} className="group flex gap-6">
                   <div className="relative w-32 h-40 flex-shrink-0 overflow-hidden bg-secondary">
@@ -202,7 +202,7 @@ export default function NewArrivalsPage() {
                   <div className="flex-1 py-2">
                     <div className="flex items-center gap-2 mb-1">
                       <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                        {product.categories?.name || "LuxuryByEsta"}
+                        {product.categories?.name || "Matthew's Mart"}
                       </p>
                       <span className="text-xs text-primary">
                         {daysSince <= 1 ? "Added today" : `Added ${daysSince} days ago`}

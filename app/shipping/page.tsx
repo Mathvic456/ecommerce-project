@@ -1,40 +1,13 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { MobileNav } from "@/components/mobile-nav"
-import { createClient } from "@/lib/supabase/client"
 import { Truck, RotateCcw, Package, Clock, Globe, Shield } from "lucide-react"
 
 export default function ShippingAndReturnsPage() {
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-  const supabase = createClient()
+  // Public page - removed auth requirement
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push("/auth/login?redirect=/shipping")
-        return
-      }
-      setLoading(false)
-    }
-    checkAuth()
-  }, [supabase, router])
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-background text-foreground">
-        <Navbar />
-        <div className="flex items-center justify-center py-32">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      </main>
-    )
-  }
 
   return (
     <main className="min-h-screen bg-background text-foreground">

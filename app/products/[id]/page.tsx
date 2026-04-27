@@ -131,7 +131,7 @@ export default function ProductDetailPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
           <h1 className="text-3xl font-serif mb-4">Product not found</h1>
           <p className="text-muted-foreground mb-8">The product you're looking for doesn't exist</p>
-          <Link 
+          <Link
             href="/categories"
             className="inline-block px-8 py-4 bg-primary text-primary-foreground text-sm tracking-wider uppercase"
           >
@@ -222,9 +222,8 @@ export default function ProductDetailPage() {
                   <button
                     key={img.id}
                     onClick={() => setSelectedImageIndex(idx)}
-                    className={`flex-shrink-0 w-20 h-20 overflow-hidden transition-opacity ${
-                      idx === selectedImageIndex ? "opacity-100 ring-2 ring-foreground" : "opacity-50 hover:opacity-75"
-                    }`}
+                    className={`flex-shrink-0 w-20 h-20 overflow-hidden transition-opacity ${idx === selectedImageIndex ? "opacity-100 ring-2 ring-foreground" : "opacity-50 hover:opacity-75"
+                      }`}
                   >
                     <Image
                       src={img.image_url || "/placeholder.svg"}
@@ -244,7 +243,7 @@ export default function ProductDetailPage() {
             {/* Category & Name */}
             <div>
               <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">
-                {product.categories?.name || "LuxuryByEsta"}
+                {product.categories?.name || "Matthew's Mart"}
               </p>
               <h1 className="text-3xl lg:text-4xl font-serif mb-4">{product.name}</h1>
               <p className="text-2xl">{formatPrice(price, currency)}</p>
@@ -284,11 +283,10 @@ export default function ProductDetailPage() {
               <button
                 onClick={handleAddToCart}
                 disabled={addedToCart}
-                className={`w-full py-4 flex items-center justify-center gap-3 text-sm tracking-wider uppercase transition-colors ${
-                  addedToCart 
-                    ? "bg-green-600 text-white" 
+                className={`w-full py-4 flex items-center justify-center gap-3 text-sm tracking-wider uppercase transition-colors ${addedToCart
+                    ? "bg-green-600 text-white"
                     : "bg-primary text-primary-foreground hover:opacity-90"
-                }`}
+                  }`}
               >
                 {addedToCart ? (
                   <>
@@ -365,7 +363,7 @@ export default function ProductDetailPage() {
                     </div>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground uppercase tracking-wider">
-                        {item.categories?.name || "LuxuryByEsta"}
+                        {item.categories?.name || "Matthew's Mart"}
                       </p>
                       <h3 className="font-medium group-hover:opacity-60 transition-opacity line-clamp-1">
                         {item.name}
