@@ -26,7 +26,7 @@ export function OAuthButtons() {
 
   return (
     <div className="space-y-3 mb-6">
-      <Button
+      {/* <Button
         type="button"
         variant="outline"
         className="w-full bg-transparent"
@@ -65,7 +65,7 @@ export function OAuthButtons() {
           <path d="M17.05 13.5c-.91 0-1.82.58-2.54 1.63.72 1.05 1.63 1.63 2.54 1.63 1.36 0 2.45-1.09 2.45-2.45 0-1.36-1.09-2.45-2.45-2.45m0 4.51c-.91 0-1.82-.58-2.54-1.63.72-1.05 1.63-1.63 2.54-1.63 1.36 0 2.45 1.09 2.45 2.45 0 1.36-1.09 2.45-2.45 2.45m-3.51-7.03c-.91 0-1.82.58-2.54 1.63.72 1.05 1.63 1.63 2.54 1.63 1.36 0 2.45-1.09 2.45-2.45 0-1.36-1.09-2.45-2.45-2.45m0 4.51c-.91 0-1.82-.58-2.54-1.63.72-1.05 1.63-1.63 2.54-1.63 1.36 0 2.45 1.09 2.45 2.45 0 1.36-1.09 2.45-2.45 2.45M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
         </svg>
         Continue with Apple
-      </Button>
+      </Button> */}
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
