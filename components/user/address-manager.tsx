@@ -30,8 +30,19 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
   const countryDropdownRef = useRef<HTMLDivElement>(null)
 
   // Sync local addresses with props when they change
+  // Also deduplicate to prevent showing the same address twice
   useEffect(() => {
-    setLocalAddresses(addresses)
+    const seen = new Set<string>()
+    const deduplicatedAddresses = addresses.filter((address) => {
+      const key = `${address.street_address}-${address.city}-${address.country}`
+      if (seen.has(key)) {
+        console.log("[v0] Filtering out duplicate address in component:", key)
+        return false
+      }
+      seen.add(key)
+      return true
+    })
+    setLocalAddresses(deduplicatedAddresses)
   }, [addresses])
 
   // Close dropdown when clicking outside

@@ -47,20 +47,41 @@ export async function saveUserProfile(
 
     if (streetAddress && city && country) {
       console.log("[v0] Saving address for user:", user.user.id)
-      const { error: addressError } = await supabase.from("user_addresses").insert([
-        {
-          user_id: user.user.id,
-          street_address: streetAddress,
-          city,
-          country,
-          postal_code: postalCode || "",
-          is_default: true,
-        },
-      ])
+      
+      // Check if an address with the same details already exists for this user
+      const { data: existingAddress, error: checkError } = await supabase
+        .from("user_addresses")
+        .select("*")
+        .eq("user_id", user.user.id)
+        .eq("street_address", streetAddress)
+        .eq("city", city)
+        .eq("country", country)
+        .single()
 
-      if (addressError && addressError.code !== "23505") {
-        console.log("[v0] Address insert error:", addressError)
-        throw addressError
+      if (checkError && checkError.code !== "PGRST116") {
+        console.log("[v0] Error checking existing address:", checkError)
+        throw checkError
+      }
+
+      // Only insert if the address doesn't already exist
+      if (!existingAddress) {
+        const { error: addressError } = await supabase.from("user_addresses").insert([
+          {
+            user_id: user.user.id,
+            street_address: streetAddress,
+            city,
+            country,
+            postal_code: postalCode || "",
+            is_default: true,
+          },
+        ])
+
+        if (addressError) {
+          console.log("[v0] Address insert error:", addressError)
+          throw addressError
+        }
+      } else {
+        console.log("[v0] Address already exists, skipping insert")
       }
     }
 
@@ -157,7 +178,21 @@ export async function getUserAddresses() {
     console.log("[v0] Addresses select error:", error)
     throw error
   }
-  return data || []
+
+  // Deduplicate addresses based on street_address, city, country combination
+  // This prevents showing duplicate addresses if they were created before the fix
+  const seen = new Set<string>()
+  const deduplicatedData = (data || []).filter((address) => {
+    const key = `${address.street_address}-${address.city}-${address.country}`
+    if (seen.has(key)) {
+      console.log("[v0] Filtering out duplicate address:", key)
+      return false
+    }
+    seen.add(key)
+    return true
+  })
+
+  return deduplicatedData
 }
 
 export async function updateUserAddress(
