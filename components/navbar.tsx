@@ -49,9 +49,9 @@ export function Navbar() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-primary text-primary-foreground text-center py-2 text-xs tracking-widest uppercase">
+      {/* <div className="bg-primary text-primary-foreground text-center py-2 text-xs tracking-widest uppercase">
         Free shipping on orders over ₦50,000
-      </div>
+      </div> */}
 
       {/* Main Navbar */}
       <nav
