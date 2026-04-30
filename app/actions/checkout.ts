@@ -81,6 +81,7 @@ export async function createCheckoutSession(
         subtotal_amount: subtotal,
         shipping_method: shippingId,
         shipping_cost: shippingFee,
+        customer_email: email, // Save email for admin reference
         status: "pending",
         shipping_address: shippingAddress,
       })

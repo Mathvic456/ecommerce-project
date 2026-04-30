@@ -1,14 +1,16 @@
 "use client"
 
-import { Suspense, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { Suspense, useState, useEffect } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
+import { saveUserProfile } from "@/app/actions/user-profile"
 
 function ConfirmResultContent() {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const status = searchParams.get("status")
   const message = searchParams.get("message")
   const isAdmin = searchParams.get("admin") === "true"
@@ -16,9 +18,46 @@ function ConfirmResultContent() {
   const [email, setEmail] = useState("")
   const [isConfirming, setIsConfirming] = useState(false)
   const [confirmResult, setConfirmResult] = useState<{ success: boolean; message: string } | null>(null)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
   
   const redirectUrl = isAdmin ? "/admin/login" : "/auth/login"
   const signupUrl = isAdmin ? "/admin/signup" : "/auth/sign-up"
+  
+  // Save pending profile data after successful confirmation
+  useEffect(() => {
+    if (status === "success" && !isSavingProfile) {
+      const savePendingProfile = async () => {
+        setIsSavingProfile(true)
+        try {
+          const pendingProfileStr = localStorage.getItem("pendingUserProfile")
+          if (pendingProfileStr) {
+            const pendingProfile = JSON.parse(pendingProfileStr)
+            console.log("[v0] Saving pending profile after confirmation:", pendingProfile)
+            
+            await saveUserProfile(
+              pendingProfile.firstName,
+              pendingProfile.lastName,
+              pendingProfile.phoneNumber,
+              pendingProfile.streetAddress,
+              pendingProfile.city,
+              pendingProfile.country,
+              pendingProfile.postalCode
+            )
+            
+            // Clear the pending profile from localStorage
+            localStorage.removeItem("pendingUserProfile")
+            console.log("[v0] Profile saved successfully")
+          }
+        } catch (error) {
+          console.error("[v0] Error saving pending profile:", error)
+        } finally {
+          setIsSavingProfile(false)
+        }
+      }
+      
+      savePendingProfile()
+    }
+  }, [status, isSavingProfile])
   
   const handleManualConfirm = async () => {
     if (!email) return
@@ -35,6 +74,24 @@ function ConfirmResultContent() {
       
       const data = await response.json()
       setConfirmResult({ success: data.success, message: data.message || data.error })
+      
+      // If successful, save pending profile
+      if (data.success) {
+        const pendingProfileStr = localStorage.getItem("pendingUserProfile")
+        if (pendingProfileStr) {
+          const pendingProfile = JSON.parse(pendingProfileStr)
+          await saveUserProfile(
+            pendingProfile.firstName,
+            pendingProfile.lastName,
+            pendingProfile.phoneNumber,
+            pendingProfile.streetAddress,
+            pendingProfile.city,
+            pendingProfile.country,
+            pendingProfile.postalCode
+          )
+          localStorage.removeItem("pendingUserProfile")
+        }
+      }
     } catch (err) {
       setConfirmResult({ success: false, message: err instanceof Error ? err.message : "An error occurred" })
     } finally {
@@ -61,10 +118,14 @@ function ConfirmResultContent() {
           </div>
           <h1 className="text-2xl font-light tracking-tight mb-2">Email Confirmed</h1>
           <p className="text-muted-foreground text-sm mb-6">
-            Your email has been confirmed successfully. You can now sign in to your account.
+            {isSavingProfile 
+              ? "Setting up your profile..." 
+              : "Your email has been confirmed successfully. You can now sign in to your account."}
           </p>
-          <Button asChild className="w-full h-12">
-            <Link href={redirectUrl}>Sign In</Link>
+          <Button asChild className="w-full h-12" disabled={isSavingProfile}>
+            <Link href={redirectUrl}>
+              {isSavingProfile ? "Please wait..." : "Sign In"}
+            </Link>
           </Button>
         </div>
       </div>
