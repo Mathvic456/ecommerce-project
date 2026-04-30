@@ -1,7 +1,5 @@
 "use client"
 
-export const dynamic = "force-dynamic"
-
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
@@ -17,6 +15,9 @@ import { Package, User, MapPin, LogOut, ChevronRight, ShoppingBag, Clock, Loader
 import { formatPrice, getCurrencyFromStorage, type Currency } from "@/lib/currency"
 
 export default function AccountPage() {
+
+
+   
   const [user, setUser] = useState<any>(null)
   const [profile, setProfile] = useState<any>(null)
   const [addresses, setAddresses] = useState<any[]>([])
