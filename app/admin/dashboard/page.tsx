@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { 
   Package, 
   ShoppingBag, 
@@ -81,24 +82,23 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-10 animate-fade-in pb-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-4xl font-serif">Command Center</h1>
-          <p className="text-muted-foreground mt-1 text-sm tracking-wide">
-            Your store at a glance for {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {quickActions.map((action) => (
-            <Button key={action.label} asChild variant="outline" size="sm" className="h-10">
-              <Link href={action.href} className="flex items-center gap-2">
-                <action.icon size={16} />
-                <span className="hidden sm:inline">{action.label}</span>
-              </Link>
-            </Button>
-          ))}
-        </div>
-      </div>
+      <AdminPageHeader
+        title="Command Center"
+        description={`Your store at a glance for ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
+        showBackButton={false}
+        action={
+          <div className="flex items-center gap-3">
+            {quickActions.map((action) => (
+              <Button key={action.label} asChild variant="outline" size="sm" className="h-10">
+                <Link href={action.href} className="flex items-center gap-2">
+                  <action.icon size={16} />
+                  <span className="hidden sm:inline">{action.label}</span>
+                </Link>
+              </Button>
+            ))}
+          </div>
+        }
+      />
 
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="border-border/40 bg-card/50 backdrop-blur-sm">

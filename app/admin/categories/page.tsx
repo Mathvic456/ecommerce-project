@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import { Edit2, Trash2, Upload, X } from "lucide-react"
 import type { Category } from "@/lib/categories"
 
@@ -124,22 +125,22 @@ export default function AdminCategories() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold">Categories</h1>
-          <p className="text-muted-foreground">Manage your product categories</p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditingId(null)
-            setFormData({ name: "", description: "", imageUrl: "" })
-            setImagePreview(null)
-            setShowForm(!showForm)
-          }}
-        >
-          {showForm ? "Cancel" : "Add Category"}
-        </Button>
-      </div>
+      <AdminPageHeader
+        title="Categories"
+        description="Manage your product categories"
+        action={
+          <Button
+            onClick={() => {
+              setEditingId(null)
+              setFormData({ name: "", description: "", imageUrl: "" })
+              setImagePreview(null)
+              setShowForm(!showForm)
+            }}
+          >
+            {showForm ? "Cancel" : "Add Category"}
+          </Button>
+        }
+      />
 
       {showForm && (
         <Card>

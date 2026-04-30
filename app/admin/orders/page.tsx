@@ -4,7 +4,10 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
+import { Eye, ChevronRight } from "lucide-react"
+import Link from "next/link"
 import type { Order } from "@/lib/products"
 
 export default function AdminOrders() {
@@ -39,35 +42,29 @@ export default function AdminOrders() {
     setLoading(false)
   }
 
-  const handleStatusChange = async (orderId: string, newStatus: string) => {
-    await supabase.from("orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId)
-
-    fetchOrders()
-  }
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "delivered":
-        return "bg-green-500"
+        return "bg-green-500 hover:bg-green-600"
       case "shipped":
-        return "bg-blue-500"
+        return "bg-blue-500 hover:bg-blue-600"
       case "received":
-        return "bg-yellow-500"
+        return "bg-yellow-500 hover:bg-yellow-600"
       case "cancelled":
-        return "bg-red-500"
+        return "bg-red-500 hover:bg-red-600"
       case "pending":
-        return "bg-gray-500"
+        return "bg-gray-500 hover:bg-gray-600"
       default:
-        return "bg-gray-500"
+        return "bg-gray-500 hover:bg-gray-600"
     }
   }
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold">Orders</h1>
-        <p className="text-muted-foreground">Manage customer orders</p>
-      </div>
+      <AdminPageHeader
+        title="Orders"
+        description="Manage customer orders"
+      />
 
       {loading ? (
         <p>Loading orders...</p>
@@ -81,61 +78,48 @@ export default function AdminOrders() {
       ) : (
         <div className="space-y-4">
           {orders.map((order) => (
-            <Card key={order.id}>
+            <Card key={order.id} className="hover:shadow-md transition-shadow">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg">{order.order_number}</CardTitle>
                     <CardDescription>{new Date(order.created_at).toLocaleDateString()}</CardDescription>
                   </div>
-                  <div className="text-right space-y-2">
+                  <div className="flex items-center gap-3">
                     <Badge className={getStatusColor(order.status)}>{order.status}</Badge>
+                    <Link href={`/admin/orders/${order.id}`}>
+                      <Button variant="outline" size="sm" className="flex items-center gap-2">
+                        <Eye size={16} />
+                        View Details
+                        <ChevronRight size={16} />
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="font-semibold">Order Total:</span>
-                  <span className="text-lg font-bold">₦{(order.total_amount / 100).toFixed(2)}</span>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <span className="text-sm text-muted-foreground">Order Total</span>
+                    <p className="text-lg font-bold">₦{(order.total_amount / 100).toFixed(2)}</p>
+                  </div>
+                  
+                  {order.order_items && order.order_items.length > 0 && (
+                    <div className="text-right">
+                      <span className="text-sm text-muted-foreground">Items</span>
+                      <p className="font-medium">{order.order_items.length} item(s)</p>
+                    </div>
+                  )}
                 </div>
 
-                {order.order_items && order.order_items.length > 0 && (
-                  <div className="border-t border-border pt-4">
-                    <h4 className="font-semibold mb-2">Items:</h4>
-                    <ul className="space-y-1">
-                      {order.order_items.map((item: any) => (
-                        <li key={item.id} className="text-sm text-muted-foreground">
-                          Qty: {item.quantity} × ₦{(item.price / 100).toFixed(2)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
                 {order.shipping_address && (
-                  <div className="border-t border-border pt-4">
-                    <h4 className="font-semibold mb-2">Shipping To:</h4>
-                    <p className="text-sm text-muted-foreground whitespace-pre-line">
+                  <div className="pt-4 border-t border-border">
+                    <h4 className="text-sm font-semibold mb-2">Shipping Address</h4>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
                       {order.shipping_address}
                     </p>
                   </div>
                 )}
-
-                <div className="border-t border-border pt-4">
-                  <label className="text-sm font-semibold mb-2 block">Update Status:</label>
-                  <Select value={order.status} onValueChange={(value) => handleStatusChange(order.id, value)}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending Payment</SelectItem>
-                      <SelectItem value="received">Order Received</SelectItem>
-                      <SelectItem value="shipped">Order Shipped</SelectItem>
-                      <SelectItem value="delivered">Order Delivered</SelectItem>
-                      <SelectItem value="cancelled">Cancelled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </CardContent>
             </Card>
           ))}

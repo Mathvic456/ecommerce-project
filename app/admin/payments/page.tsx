@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import type { Order } from "@/lib/products"
 
 export default function AdminPayments() {
@@ -65,10 +66,10 @@ export default function AdminPayments() {
 
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-4xl font-bold">Payment Tracking</h1>
-        <p className="text-muted-foreground">Monitor all payments and transactions</p>
-      </div>
+      <AdminPageHeader
+        title="Payment Tracking"
+        description="Monitor all payments and transactions"
+      />
 
       {loading ? (
         <p>Loading payment data...</p>

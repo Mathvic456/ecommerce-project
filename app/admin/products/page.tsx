@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { AdminPageHeader } from "@/components/admin/admin-page-header"
 import type { Product, Category } from "@/lib/categories"
 import { Edit2, Trash2, X, Upload } from "lucide-react"
 
@@ -304,34 +305,34 @@ export default function AdminProducts() {
 
   return (
     <div className="space-y-8">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-4xl font-bold">Products</h1>
-          <p className="text-muted-foreground">Manage your product catalog</p>
-        </div>
-        <Button
-          onClick={() => {
-            setEditingId(null)
-            setFormData({
-              name: "",
-              description: "",
-              categoryId: "",
-              priceNGN: "",
-              priceGBP: "",
-              priceUSD: "",
-              images: [
-                { file: null, url: "" },
-                { file: null, url: "" },
-                { file: null, url: "" },
-                { file: null, url: "" },
-              ],
-            })
-            setShowForm(!showForm)
-          }}
-        >
-          {showForm ? "Cancel" : "Add Product"}
-        </Button>
-      </div>
+      <AdminPageHeader
+        title="Products"
+        description="Manage your product catalog"
+        action={
+          <Button
+            onClick={() => {
+              setEditingId(null)
+              setFormData({
+                name: "",
+                description: "",
+                categoryId: "",
+                priceNGN: "",
+                priceGBP: "",
+                priceUSD: "",
+                images: [
+                  { file: null, url: "" },
+                  { file: null, url: "" },
+                  { file: null, url: "" },
+                  { file: null, url: "" },
+                ],
+              })
+              setShowForm(!showForm)
+            }}
+          >
+            {showForm ? "Cancel" : "Add Product"}
+          </Button>
+        }
+      />
 
       {showForm && (
         <Card>
