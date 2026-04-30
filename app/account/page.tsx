@@ -14,6 +14,9 @@ import { AddressManager } from "@/components/user/address-manager"
 import { Package, User, MapPin, LogOut, ChevronRight, ShoppingBag, Clock, Loader2 } from "lucide-react"
 import { formatPrice, getCurrencyFromStorage, type Currency } from "@/lib/currency"
 
+// Prevent prerendering - this page requires browser APIs
+export const dynamic = "force-dynamic"
+
 export default function AccountPage() {
 
 
@@ -25,11 +28,11 @@ export default function AccountPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<"orders" | "profile" | "addresses">("orders")
   const [currency, setCurrency] = useState<Currency>("NGN")
-  const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
     const fetchData = async () => {
+      const supabase = createClient()
       const { data } = await supabase.auth.getUser()
       if (!data?.user) {
         router.push("/auth/login")
@@ -104,9 +107,10 @@ export default function AccountPage() {
     }
 
     fetchData()
-  }, [supabase, router])
+  }, [router])
 
   const handleLogout = async () => {
+    const supabase = createClient()
     await supabase.auth.signOut()
     router.push("/")
   }

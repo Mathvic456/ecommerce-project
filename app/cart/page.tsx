@@ -1,6 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+
+// Prevent prerendering - this page requires browser APIs
+export const dynamic = "force-dynamic"
 import Link from "next/link"
 import Image from "next/image"
 import { Navbar } from "@/components/navbar"
@@ -27,11 +30,11 @@ export default function CartPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [currency, setCurrency] = useState<Currency>("NGN")
-  const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
     const fetchCart = async () => {
+      const supabase = createClient()
       const { data } = await supabase.auth.getUser()
       if (!data?.user) {
         router.push("/auth/login")
@@ -65,9 +68,10 @@ export default function CartPage() {
     }
     window.addEventListener("storage", handleStorageChange)
     return () => window.removeEventListener("storage", handleStorageChange)
-  }, [supabase, router])
+  }, [router])
 
   const handleUpdateQuantity = async (cartItemId: string, newQuantity: number) => {
+    const supabase = createClient()
     if (newQuantity <= 0) {
       await supabase.from("cart_items").delete().eq("id", cartItemId)
     } else {
@@ -81,6 +85,7 @@ export default function CartPage() {
   }
 
   const handleRemoveItem = async (cartItemId: string) => {
+    const supabase = createClient()
     await supabase.from("cart_items").delete().eq("id", cartItemId)
     setCartItems(cartItems.filter((item) => item.id !== cartItemId))
   }
