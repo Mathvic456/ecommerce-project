@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { addUserAddress, deleteUserAddress, updateUserAddress, getUserAddresses } from "@/app/actions/user-profile"
-import { countries, type CountryData, getCountryByName } from "@/lib/countries"
+import { getAllCountries, type CountryData, getCountryByCode } from "@/lib/locations"
 import Image from "next/image"
 import { ChevronDown, Search, Plus, Loader2 } from "lucide-react"
 
@@ -69,9 +69,9 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
     return `https://flagcdn.com/w40/${countryCode.toLowerCase()}.png`
   }
 
-  const filteredCountries = countries.filter(country =>
+  const filteredCountries = getAllCountries().filter(country =>
     country.name.toLowerCase().includes(countrySearch.toLowerCase()) ||
-    country.code.toLowerCase().includes(countrySearch.toLowerCase())
+    country.isoCode.toLowerCase().includes(countrySearch.toLowerCase())
   )
 
   // Update postal code when country changes
@@ -79,10 +79,6 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
     setSelectedCountry(country)
     setIsCountryDropdownOpen(false)
     setCountrySearch("")
-    // Set postal code placeholder as the default value
-    if (country?.postalCodePlaceholder) {
-      setFormData(prev => ({ ...prev, postalCode: country.postalCodePlaceholder || "" }))
-    }
   }
 
   const resetForm = () => {
@@ -240,7 +236,8 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
                   className="bg-transparent"
                   onClick={() => {
                     // Find the country by name and set it
-                    const country = getCountryByName(address.country)
+                    const countries = getAllCountries()
+                    const country = countries.find(c => c.name.toLowerCase() === address.country.toLowerCase())
                     setSelectedCountry(country || null)
                     setFormData({
                       streetAddress: address.street_address,
@@ -295,7 +292,7 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
                       {selectedCountry ? (
                         <>
                           <Image
-                            src={getFlagUrl(selectedCountry.code) || "/placeholder.svg"}
+                            src={getFlagUrl(selectedCountry.isoCode) || "/placeholder.svg"}
                             alt={selectedCountry.name}
                             width={24}
                             height={16}
@@ -338,15 +335,15 @@ export function AddressManager({ addresses, onUpdate }: AddressManagerProps) {
                         ) : (
                           filteredCountries.map((country) => (
                             <button
-                              key={country.code}
+                              key={country.isoCode}
                               type="button"
                               onClick={() => handleCountrySelect(country)}
                               className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors ${
-                                selectedCountry?.code === country.code ? "bg-muted" : ""
+                                selectedCountry?.isoCode === country.isoCode ? "bg-muted" : ""
                               }`}
                             >
                               <Image
-                                src={getFlagUrl(country.code) || "/placeholder.svg"}
+                                src={getFlagUrl(country.isoCode) || "/placeholder.svg"}
                                 alt={country.name}
                                 width={24}
                                 height={16}

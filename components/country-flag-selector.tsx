@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Image from "next/image"
-import { type CountryData } from "@/lib/countries"
+import { type CountryData } from "@/lib/locations"
 import { ChevronDown, Search } from "lucide-react"
 
 interface CountryFlagSelectorProps {
@@ -45,8 +45,8 @@ export function CountryFlagSelector({
 
   const filteredCountries = countries.filter(country =>
     country.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    country.dialCode.includes(searchQuery) ||
-    country.code.toLowerCase().includes(searchQuery.toLowerCase())
+    country.phonecode.includes(searchQuery) ||
+    country.isoCode.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const getFlagUrl = (countryCode: string) => {
@@ -66,7 +66,7 @@ export function CountryFlagSelector({
         {selectedCountry ? (
           <div className="flex items-center gap-3 w-full">
             <Image
-              src={getFlagUrl(selectedCountry.code) || "/placeholder.svg"}
+              src={getFlagUrl(selectedCountry.isoCode) || "/placeholder.svg"}
               alt={selectedCountry.name}
               width={24}
               height={16}
@@ -74,7 +74,7 @@ export function CountryFlagSelector({
               unoptimized
             />
             <span className="text-sm font-medium truncate flex-1 text-left">
-              {selectedCountry.name} ({selectedCountry.code})
+              {selectedCountry.name} ({selectedCountry.isoCode})
             </span>
             <ChevronDown className="h-4 w-4 text-muted-foreground flex-shrink-0" />
           </div>
@@ -91,7 +91,7 @@ export function CountryFlagSelector({
         <input
           type="hidden"
           name="country"
-          value={selectedCountry?.code || ""}
+          value={selectedCountry?.isoCode || ""}
           required
         />
       )}
@@ -122,28 +122,28 @@ export function CountryFlagSelector({
               </div>
             ) : (
               filteredCountries.map((country) => (
-                <button
-                  key={country.code}
+                  <button
+                  key={country.isoCode}
                   type="button"
                   onClick={() => {
-                    onSelect(country.code)
+                    onSelect(country.isoCode)
                     setIsOpen(false)
                     setSearchQuery("")
                   }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 text-left hover:bg-muted/50 transition-colors ${
-                    selectedCountry?.code === country.code ? "bg-muted" : ""
+                    selectedCountry?.isoCode === country.isoCode ? "bg-muted" : ""
                   }`}
                 >
                   <Image
-                    src={getFlagUrl(country.code) || "/placeholder.svg"}
+                    src={getFlagUrl(country.isoCode) || "/placeholder.svg"}
                     alt={country.name}
                     width={24}
                     height={16}
                     className="rounded-sm object-cover flex-shrink-0"
                     unoptimized
                   />
-                  <span className="text-sm flex-1 truncate">{country.name} ({country.code})</span>
-                  <span className="text-xs text-muted-foreground">{country.dialCode}</span>
+                  <span className="text-sm flex-1 truncate">{country.name} ({country.isoCode})</span>
+                  <span className="text-xs text-muted-foreground">+{country.phonecode}</span>
                 </button>
               ))
             )}

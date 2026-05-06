@@ -10,9 +10,18 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { saveUserProfile } from "@/app/actions/user-profile"
 import { validateSignupForm, validateProfileForm } from "@/lib/validation"
-import { countries, type CountryData, type StateData, validatePhoneForCountry, formatPhoneWithCountryCode } from "@/lib/countries"
+import { 
+  getAllCountries,
+  getStatesOfCountry,
+  type CountryData, 
+  type StateData, 
+  type CityData,
+  validatePhoneForCountry, 
+  formatPhoneWithCountryCode,
+  getPhoneValidationInfo
+} from "@/lib/locations"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
-import Image from "next/image"
+import { HierarchicalAddressSelector } from "@/components/auth/hierarchical-address-selector"
 
 export default function SignUpPage() {
   const [step, setStep] = useState(1)
@@ -22,11 +31,14 @@ export default function SignUpPage() {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
-  const [streetAddress, setStreetAddress] = useState("")
-  const [city, setCity] = useState("")
+  
+  // Hierarchical address state
   const [selectedCountry, setSelectedCountry] = useState<CountryData | null>(null)
   const [selectedState, setSelectedState] = useState<StateData | null>(null)
+  const [selectedCity, setSelectedCity] = useState<CityData | null>(null)
+  const [streetAddress, setStreetAddress] = useState("")
   const [postalCode, setPostalCode] = useState("")
+  
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [isLoading, setIsLoading] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
@@ -34,12 +46,14 @@ export default function SignUpPage() {
 
   // Handle country change - auto-populate postal code and reset phone
   const handleCountryChange = (countryCode: string) => {
-    const country = countries.find(c => c.code === countryCode)
+    const countries = getAllCountries()
+    const country = countries.find(c => c.isoCode === countryCode)
     setSelectedCountry(country || null)
     setSelectedState(null)
+    setSelectedCity(null)
+    setStreetAddress("")
     setPhoneNumber("")
-    // Auto-populate postal code with country's placeholder/default value
-    setPostalCode(country?.postalCodePlaceholder || "")
+    setPostalCode("")
 
     // Clear phone error when country changes
     if (fieldErrors.phone) {
@@ -50,12 +64,27 @@ export default function SignUpPage() {
     }
   }
 
-  // Handle state change - update postal code
-  const handleStateChange = (stateCode: string) => {
-    const state = selectedCountry?.states?.find(s => s.code === stateCode)
-    setSelectedState(state || null)
-    // Update postal code with state's placeholder
-    setPostalCode(state?.postalCodePlaceholder || selectedCountry?.postalCodePlaceholder || "")
+  // Handle state change
+  const handleStateChange = (state: StateData | null) => {
+    setSelectedState(state)
+    setSelectedCity(null)
+    setStreetAddress("")
+  }
+
+  // Handle city change
+  const handleCityChange = (city: CityData | null) => {
+    setSelectedCity(city)
+    setStreetAddress("")
+  }
+
+  // Handle street change
+  const handleStreetChange = (street: string) => {
+    setStreetAddress(street)
+  }
+
+  // Handle postal code change
+  const handlePostalCodeChange = (code: string) => {
+    setPostalCode(code)
   }
 
   // Format phone number as user types (only digits)
@@ -133,36 +162,48 @@ export default function SignUpPage() {
     e.preventDefault()
     setFieldErrors({})
 
-    // Validate country selection
+    // Validate hierarchical address selection
+    const validationErrors: Record<string, string> = {}
+    
     if (!selectedCountry) {
-      setFieldErrors({ country: "Please select a country" })
-      return
+      validationErrors.country = "Please select a country"
     }
 
     // Validate state selection if country has states
-    if (selectedCountry.states && selectedCountry.states.length > 0 && !selectedState) {
-      setFieldErrors({ state: "Please select a state/region" })
-      return
+    const states = selectedCountry ? getStatesOfCountry(selectedCountry.isoCode) : []
+    if (selectedCountry && states.length > 0 && !selectedState) {
+      validationErrors.state = "Please select a state/region"
+    }
+
+    // Validate city selection
+    if (!selectedCity) {
+      validationErrors.city = "Please select a city"
+    }
+
+    // Validate street address
+    if (!streetAddress.trim()) {
+      validationErrors.street = "Please enter a street address"
+    }
+
+    // Validate postal code
+    if (!postalCode.trim()) {
+      validationErrors.postalCode = "Please enter a postal code"
     }
 
     // Validate phone for selected country
-    const phoneError = validatePhoneForCountry(phoneNumber, selectedCountry.code)
-    if (phoneError) {
-      setFieldErrors({ phone: phoneError })
-      return
+    if (selectedCountry) {
+      const phoneError = validatePhoneForCountry(phoneNumber, selectedCountry.isoCode)
+      if (phoneError) validationErrors.phone = phoneError
+    } else {
+      validationErrors.phone = "Please select a country first"
     }
 
-    const validation = validateProfileForm({
-      firstName,
-      lastName,
-      phone: phoneNumber,
-      address: streetAddress,
-      city,
-      country: selectedCountry.name,
-    })
-
-    if (!validation.isValid) {
-      setFieldErrors(validation.errors)
+    // Validate name fields
+    if (!firstName.trim()) validationErrors.firstName = "First name is required"
+    if (!lastName.trim()) validationErrors.lastName = "Last name is required"
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors)
       return
     }
 
@@ -170,7 +211,8 @@ export default function SignUpPage() {
 
     try {
       // Format phone with country code
-      const fullPhoneNumber = formatPhoneWithCountryCode(phoneNumber, selectedCountry.dialCode)
+      const dialCode = selectedCountry!.phonecode ? `+${selectedCountry!.phonecode}` : ""
+      const fullPhoneNumber = formatPhoneWithCountryCode(phoneNumber, dialCode)
 
       // Store profile data in localStorage to be saved after email confirmation
       // The user is NOT authenticated until they confirm their email
@@ -178,9 +220,9 @@ export default function SignUpPage() {
         firstName,
         lastName,
         phoneNumber: fullPhoneNumber,
-        streetAddress,
-        city,
-        country: selectedCountry.name,
+        streetAddress: streetAddress,
+        city: selectedCity!.name,
+        country: selectedCountry!.name,
         state: selectedState?.name || null,
         postalCode,
         email, // Store email to match the profile to the user
@@ -332,8 +374,8 @@ export default function SignUpPage() {
                 <div className="flex items-center h-12 border-0 border-b border-border">
                   {/* Flag Dropdown */}
                   <CountryFlagSelector
-                    countries={countries}
-                    selectedCountry={selectedCountry}
+                    countries={getAllCountries() as any}
+                    selectedCountry={selectedCountry as any}
                     onSelect={handleCountryChange}
                     required
                   />
@@ -341,7 +383,7 @@ export default function SignUpPage() {
                   {/* Country Code Display */}
                   {selectedCountry && (
                     <span className="text-muted-foreground whitespace-nowrap px-2 border-r border-border text-sm">
-                      {selectedCountry.dialCode}
+                      +{selectedCountry.phonecode}
                     </span>
                   )}
 
@@ -363,88 +405,37 @@ export default function SignUpPage() {
                 {fieldErrors.country && <p className="text-xs text-destructive">{fieldErrors.country}</p>}
                 {selectedCountry && (
                   <p className="text-xs text-muted-foreground">
-                    {Array.isArray(selectedCountry.phoneLength)
-                      ? `${selectedCountry.phoneLength[0]}-${selectedCountry.phoneLength[1]} digits required`
-                      : `${selectedCountry.phoneLength} digits required`}
+                    {(() => {
+                      const info = getPhoneValidationInfo(selectedCountry.isoCode)
+                      return `${info.min}-${info.max} digits required`
+                    })()}
                     {phoneNumber && ` (${phoneNumber.length} entered)`}
                   </p>
                 )}
                 {fieldErrors.phone && <p className="text-xs text-destructive">{fieldErrors.phone}</p>}
               </div>
 
-              {/* State/Region Selector - only show if country has states */}
-              {selectedCountry?.states && selectedCountry.states.length > 0 && (
-                <div className="space-y-2">
-                  <Label htmlFor="state" className="text-xs uppercase tracking-wider text-muted-foreground">
-                    State/Region
-                  </Label>
-                  <select
-                    id="state"
-                    value={selectedState?.code || ""}
-                    onChange={(e) => handleStateChange(e.target.value)}
-                    className="h-12 w-full border-0 border-b border-border bg-transparent text-sm focus:outline-none focus:border-primary"
-                    required
-                  >
-                    <option value="">Select a state/region</option>
-                    {selectedCountry.states.map((state) => (
-                      <option key={state.code} value={state.code}>
-                        {state.name}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.state && <p className="text-xs text-destructive">{fieldErrors.state}</p>}
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <Label htmlFor="streetAddress" className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Street Address
-                </Label>
-                <Input
-                  id="streetAddress"
-                  type="text"
-                  required
-                  autoComplete="street-address"
-                  value={streetAddress}
-                  onChange={(e) => setStreetAddress(e.target.value)}
-                  className={`h-12 border-0 border-b rounded-none bg-transparent focus-visible:ring-0 focus-visible:border-foreground transition-colors ${fieldErrors.address ? "border-destructive" : ""}`}
-                />
-                {fieldErrors.address && <p className="text-xs text-destructive">{fieldErrors.address}</p>}
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city" className="text-xs uppercase tracking-wider text-muted-foreground">
-                    City
-                  </Label>
-                  <Input
-                    id="city"
-                    type="text"
-                    required
-                    autoComplete="address-level2"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className={`h-12 border-0 border-b rounded-none bg-transparent focus-visible:ring-0 focus-visible:border-foreground transition-colors ${fieldErrors.city ? "border-destructive" : ""}`}
-                  />
-                  {fieldErrors.city && <p className="text-xs text-destructive">{fieldErrors.city}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="postalCode" className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Postal Code
-                  </Label>
-                  <Input
-                    id="postalCode"
-                    type="text"
-                    autoComplete="postal-code"
-                    placeholder={selectedCountry ? "Auto-filled" : "Select country"}
-                    value={postalCode}
-                    readOnly
-                    disabled
-                    className="h-12 border-0 border-b rounded-none bg-muted/30 focus-visible:ring-0 cursor-not-allowed"
-                  />
-                  <p className="text-xs text-muted-foreground">Auto-filled based on country</p>
-                </div>
-              </div>
+              {/* Hierarchical Address Selector */}
+              <HierarchicalAddressSelector
+                selectedCountry={selectedCountry}
+                selectedState={selectedState}
+                selectedCity={selectedCity}
+                streetAddress={streetAddress}
+                postalCode={postalCode}
+                onCountryChange={(country) => {
+                  setSelectedCountry(country)
+                  setSelectedState(null)
+                  setSelectedCity(null)
+                  setStreetAddress("")
+                  setPhoneNumber("")
+                  setPostalCode("")
+                }}
+                onStateChange={handleStateChange}
+                onCityChange={handleCityChange}
+                onStreetChange={handleStreetChange}
+                onPostalCodeChange={handlePostalCodeChange}
+                errors={fieldErrors}
+              />
             </>
           )}
 

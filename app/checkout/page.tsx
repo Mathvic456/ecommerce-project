@@ -13,7 +13,7 @@ import { createCheckoutSession } from "@/app/actions/checkout"
 import { formatPrice, type Currency, getCurrencyFromStorage, getPriceForCurrency } from "@/lib/currency"
 import { getUserAddresses, addUserAddress } from "@/app/actions/user-profile"
 import { ChevronLeft, Lock, MapPin, Plus, Check, CreditCard, Loader2, Truck } from "lucide-react"
-import { countries, type CountryData } from "@/lib/countries"
+import { getAllCountries, type CountryData } from "@/lib/locations"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
 import { CitySelector } from "@/components/city-selector"
 import { shippingOptions, calculateShippingCost } from "@/lib/shipping"
@@ -96,15 +96,13 @@ export default function CheckoutPage() {
   }, [supabase, router])
 
   const handleCountryChange = (countryCode: string) => {
-    const country = countries.find(c => c.code === countryCode)
+    const country = getAllCountries().find(c => c.isoCode === countryCode)
     setSelectedCountry(country || null)
-    if (country?.postalCodePlaceholder) {
-      setNewAddress(prev => ({ 
-        ...prev, 
-        postalCode: country.postalCodePlaceholder || "",
-        city: "" // Reset city on country change
-      }))
-    }
+    setNewAddress(prev => ({ 
+      ...prev, 
+      postalCode: "",
+      city: "" // Reset city on country change
+    }))
   }
 
   const subtotalAmount = cartItems.reduce((sum, item) => {
@@ -312,7 +310,7 @@ export default function CheckoutPage() {
                     <label className="text-sm text-muted-foreground">Country</label>
                     <div className="w-full border border-border bg-background">
                       <CountryFlagSelector
-                        countries={countries}
+                        countries={getAllCountries()}
                         selectedCountry={selectedCountry}
                         onSelect={handleCountryChange}
                         required

@@ -9,7 +9,15 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { saveUserProfile } from "@/app/actions/user-profile"
 import { createClient } from "@/lib/supabase/client"
-import { countries, type CountryData, validatePhoneForCountry, formatPhoneWithCountryCode, parsePhoneNumber } from "@/lib/countries"
+import { 
+  getAllCountries, 
+  getCountryByCode,
+  type CountryData, 
+  validatePhoneForCountry, 
+  formatPhoneWithCountryCode,
+  parsePhoneNumber,
+  getPhoneValidationInfo
+} from "@/lib/locations"
 import { CountryFlagSelector } from "@/components/country-flag-selector"
 
 interface ProfileEditorProps {
@@ -35,8 +43,11 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
   // Parse existing phone number to extract country and local number
   useEffect(() => {
     if (initialProfile?.phone_number) {
-      const { country, localNumber } = parsePhoneNumber(initialProfile.phone_number)
-      setSelectedCountry(country)
+      const { countryCode, localNumber } = parsePhoneNumber(initialProfile.phone_number)
+      if (countryCode) {
+        const country = getCountryByCode(countryCode)
+        setSelectedCountry(country || null)
+      }
       setPhoneNumber(localNumber)
     }
   }, [initialProfile])
@@ -53,7 +64,7 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
 
   // Handle country change
   const handleCountryChange = (countryCode: string) => {
-    const country = countries.find(c => c.code === countryCode)
+    const country = getCountryByCode(countryCode)
     setSelectedCountry(country || null)
     setPhoneNumber("")
     setPhoneError("")
@@ -65,10 +76,8 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
     const digitsOnly = value.replace(/\D/g, "")
     
     if (selectedCountry) {
-      const maxLength = Array.isArray(selectedCountry.phoneLength) 
-        ? selectedCountry.phoneLength[1] 
-        : selectedCountry.phoneLength
-      setPhoneNumber(digitsOnly.slice(0, maxLength))
+      const { max } = getPhoneValidationInfo(selectedCountry.isoCode)
+      setPhoneNumber(digitsOnly.slice(0, max))
     } else {
       setPhoneNumber(digitsOnly.slice(0, 15))
     }
@@ -82,7 +91,7 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
 
     // Validate phone if country is selected
     if (selectedCountry && phoneNumber) {
-      const error = validatePhoneForCountry(phoneNumber, selectedCountry.code)
+      const error = validatePhoneForCountry(phoneNumber, selectedCountry.isoCode)
       if (error) {
         setPhoneError(error)
         return
@@ -93,8 +102,9 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
 
     try {
       // Format phone with country code
+      const dialCode = selectedCountry?.phonecode ? `+${selectedCountry.phonecode}` : ""
       const fullPhoneNumber = selectedCountry 
-        ? formatPhoneWithCountryCode(phoneNumber, selectedCountry.dialCode)
+        ? formatPhoneWithCountryCode(phoneNumber, dialCode)
         : phoneNumber
 
       await saveUserProfile(firstName, lastName, fullPhoneNumber)
@@ -159,7 +169,7 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
               <div className="flex items-center h-10 border border-input rounded-md overflow-hidden">
                 {/* Flag Dropdown */}
                 <CountryFlagSelector
-                  countries={countries}
+                  countries={getAllCountries()}
                   selectedCountry={selectedCountry}
                   onSelect={handleCountryChange}
                 />
@@ -167,7 +177,7 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
                 {/* Country Code Display */}
                 {selectedCountry && (
                   <span className="text-muted-foreground whitespace-nowrap px-2 border-r border-input text-sm">
-                    {selectedCountry.dialCode}
+                    +{selectedCountry.phonecode}
                   </span>
                 )}
                 
@@ -186,9 +196,10 @@ export function ProfileEditor({ initialProfile, onUpdate }: ProfileEditorProps) 
               </div>
               {selectedCountry && (
                 <p className="text-xs text-muted-foreground">
-                  {Array.isArray(selectedCountry.phoneLength) 
-                    ? `${selectedCountry.phoneLength[0]}-${selectedCountry.phoneLength[1]} digits required`
-                    : `${selectedCountry.phoneLength} digits required`}
+                  {(() => {
+                    const info = getPhoneValidationInfo(selectedCountry.isoCode)
+                    return `${info.min}-${info.max} digits required`
+                  })()}
                   {phoneNumber && ` (${phoneNumber.length} entered)`}
                 </p>
               )}
